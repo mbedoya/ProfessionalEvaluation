@@ -9,7 +9,7 @@ using System.Data;
 
 namespace ProfessionalEvaluation.Persistence
 {
-    public class EvaluationPersistence
+    public class EvaluationPersistence : Persistence
     {
         public static List<EvaluationTO> GetAll()
         {
@@ -28,15 +28,6 @@ namespace ProfessionalEvaluation.Persistence
         private static EvaluationTO MapElement(DataRow item)
         {
             return new EvaluationTO() { ID = Convert.ToInt32(item["ID"]), Name = item["Name"].ToString(), Description = item["Description"].ToString() };
-        }
-
-        private static DataTable ExecuteCommand(string command)
-        {
-            System.Data.IDataAdapter adapter = DataAdapterFactory.CreateAdapter(command);
-            DataSet dataSet = new DataSet();
-            adapter.Fill(dataSet);
-
-            return dataSet.Tables[0];
         }
     }
 }
