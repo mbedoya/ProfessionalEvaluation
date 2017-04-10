@@ -12,33 +12,29 @@ namespace ProfessionalEvaluation.Model
         private string industry;
         private string role;
 
-        private List<Section> sections;
+        private List<SectionTO> sections;
 
         public Evaluation(string industry, string role)
         {
             this.industry = industry;
             this.role = role;
 
-            sections = FindSections();
+            //sections = FindSections();
+        }
+
+        public Evaluation(int id)
+        {
+            Section section = new Section();
+            sections = section.GetByEvaluationID(id);
         }
 
         public static List<EvaluationTO> GetAll()
         {
             List<EvaluationTO> list = EvaluationPersistence.GetAll();
-
             return list;
         }
 
-        private List<Section> FindSections()
-        {
-            List<Section> list;
-            list = new List<Section>();
-            list.Add(new Section());
-
-            return list;
-        }
-
-        public List<Section> GetSections()
+        public List<SectionTO> GetSections()
         {
             return sections;
         }

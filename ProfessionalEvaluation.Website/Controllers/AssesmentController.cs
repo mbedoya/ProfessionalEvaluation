@@ -11,20 +11,21 @@ namespace ProfessionalEvaluation.Website.Controllers
     public class AssesmentController : Controller
     {
         private const string SESSION_ASSESMENT_ID = "AssesmentID";
+        private const string QUERY_STRING_ID = "id";
 
         //
         // GET: /Assesment/
 
         public ActionResult Index()
         {
-            Session[SESSION_ASSESMENT_ID] = Request.QueryString["id"];
+            Session[SESSION_ASSESMENT_ID] = Request.QueryString[QUERY_STRING_ID];
             return View();
         }
 
         public ActionResult GetData()
         {
             AssesmentTO data = null;
-            string assesmentID = Session[SESSION_ASSESMENT_ID] != null ? Session[SESSION_ASSESMENT_ID].ToString() : "";
+            string assesmentID = Session[SESSION_ASSESMENT_ID] != null ? Session[SESSION_ASSESMENT_ID].ToString() : null;
 
             if (!String.IsNullOrEmpty(assesmentID))
             {

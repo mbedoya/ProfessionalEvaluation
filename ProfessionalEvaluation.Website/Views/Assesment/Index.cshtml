@@ -70,78 +70,84 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron hero-spacer">
-            <img id="company_logo" src="" style="visibility:hidden" />
+            <img id="company_logo" src="" style="visibility: hidden" />
             <h3 id="title"></h3>
             <p id="evaluation_description"></p>
             <p id="duration"></p>
-            <p id="btnContinue" style="visibility:hidden">
+            <p id="btnContinue" style="visibility: hidden">
                 <a class="btn btn-primary btn-block">Continuar</a>
             </p>
         </header>
 
         <hr>
 
-        <!-- Title -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Listado de Pruebas</h3>
+        <div id="detail" style="visibility:hidden">
+
+            <!-- Title -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Listado de Pruebas</h3>
+                </div>
             </div>
+            <!-- /.row -->
+
+            <!-- Page Features -->
+            <div class="row text-center">
+
+                <div class="col-md-3 col-sm-6 hero-feature">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3 id="section1_name"></h3>
+                            <p id="section1_description"></p>
+                            <p>
+                                Duración: <span id="section1_duration"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6 hero-feature">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>Lógica de Programación</h3>
+                            <p>Esta prueba mide la capacidad para crear, entender y modificar algoritmos.</p>
+                            <p>
+                                Duración: 2 horas
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6 hero-feature">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>Pruebas Unitarias: Ejecución</h3>
+                            <p>Esta prueba permite determinar la forma como realiza las pruebas unitarias.</p>
+                            <p>
+                                Duración: 1 hora
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6 hero-feature">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>Metodologías de desarrollo</h3>
+                            <p>Esta prueba mide conceptualización y experiencia en trabajo con equipos de desarrollo.</p>
+                            <p>
+                                Duración: 1 horas
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.row -->
+
         </div>
-        <!-- /.row -->
 
-        <!-- Page Features -->
-        <div class="row text-center">
 
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3>Capacidad de análisis</h3>
-                        <p>Esta prueba mide la capacidad de entendimiento y solución a diversos problemas.</p>
-                        <p>
-                            Duración: 1 hora
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3>Lógica de Programación</h3>
-                        <p>Esta prueba mide la capacidad para crear, entender y modificar algoritmos.</p>
-                        <p>
-                            Duración: 2 horas
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3>Pruebas Unitarias: Ejecución</h3>
-                        <p>Esta prueba permite determinar la forma como realiza las pruebas unitarias.</p>
-                        <p>
-                            Duración: 1 hora
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3>Metodologías de desarrollo</h3>
-                        <p>Esta prueba mide conceptualización y experiencia en trabajo con equipos de desarrollo.</p>
-                        <p>
-                            Duración: 1 horas
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <!-- /.row -->
 
         <hr>
 
@@ -207,6 +213,23 @@
 
                             $("#btnContinue").css("visibility", "visible");
 
+                            //Get Sections
+                            ajaxPost("Evaluation", "GetSections", { evaluationID: data.Evaluation.ID }, function (success, data) {
+
+                                console.log(data);
+
+                                if (success) {
+
+                                    if (data && data.length > 0) {
+                                        $("#detail").css("visibility", "visible");
+                                        $("#section1_name").html(data[0].Name);
+                                        $("#section1_description").html(data[0].Description);
+                                        $("#section1_duration").html(data[0].EstimatedDuration + " hora");
+                                    }
+
+                                }
+                            });
+
                         } else {
 
                             $("#title").html("Lo sentimos, no encontramos tu prueba");
@@ -221,7 +244,7 @@
             init();
         });
     </script>
-    
+
 
 </body>
 
