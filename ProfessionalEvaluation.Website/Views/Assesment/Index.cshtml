@@ -188,7 +188,38 @@
                 });
             }
 
-            function init() {
+            function getSections(evaluationID) {
+
+                //Get Sections
+                ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
+
+                    console.log(data);
+
+                    if (success) {
+
+                        if (data && data.length > 0) {
+                            $("#detail").css("visibility", "visible");
+
+                            var totalDuration = 0;
+                            for (var i = 0; i < data.length; i++) {
+                                if (data[0].EstimatedDuration) {
+                                    totalDuration = totalDuration + data[0].EstimatedDuration;
+                                }
+                            }
+
+                            $("#duration").css("visibility", "visible");
+                            $("#duration").html("Duración estimada: " + totalDuration + " horas");
+
+                            $("#section1_name").html(data[0].Name);
+                            $("#section1_description").html(data[0].Description);
+                            $("#section1_duration").html(data[0].EstimatedDuration + " hora");
+                        }
+
+                    }
+                });
+            }
+
+            function getAssesmentData() {
 
                 ajaxPost("Assesment", "GetData", {}, function (success, data) {
 
@@ -213,22 +244,7 @@
 
                             $("#btnContinue").css("visibility", "visible");
 
-                            //Get Sections
-                            ajaxPost("Evaluation", "GetSections", { evaluationID: data.Evaluation.ID }, function (success, data) {
-
-                                console.log(data);
-
-                                if (success) {
-
-                                    if (data && data.length > 0) {
-                                        $("#detail").css("visibility", "visible");
-                                        $("#section1_name").html(data[0].Name);
-                                        $("#section1_description").html(data[0].Description);
-                                        $("#section1_duration").html(data[0].EstimatedDuration + " hora");
-                                    }
-
-                                }
-                            });
+                            getSections(data.Evaluation.ID);
 
                         } else {
 
@@ -239,6 +255,10 @@
                         $("#title").html("Lo sentimos, se ha presentado en error");
                     }
                 });
+            }
+
+            function init() {
+                getAssesmentData();
             }
 
             init();

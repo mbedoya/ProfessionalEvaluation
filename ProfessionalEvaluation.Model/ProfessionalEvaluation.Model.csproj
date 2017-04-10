@@ -44,6 +44,9 @@
     <Compile Include="Industry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Section.cs" />
+    <Compile Include="SectionData\InternalSectionData.cs" />
+    <Compile Include="SectionData\SectionDataFactory.cs" />
+    <Compile Include="SectionData\SectionDataProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfessionalEvaluation.Persistence\ProfessionalEvaluation.Persistence.csproj">

@@ -12,6 +12,8 @@ namespace ProfessionalEvaluation.Model
         private string industry;
         private string role;
 
+        private int id;
+
         private List<SectionTO> sections;
 
         public Evaluation(string industry, string role)
@@ -24,8 +26,14 @@ namespace ProfessionalEvaluation.Model
 
         public Evaluation(int id)
         {
-            Section section = new Section();
-            sections = section.GetByEvaluationID(id);
+            this.id = id;
+            sections = GetSectionsByID();
+        }
+
+        public List<SectionTO> GetSectionsByID()
+        {
+            List<SectionTO> list = SectionPersistence.GetByEvaluationID(id);
+            return list;
         }
 
         public static List<EvaluationTO> GetAll()

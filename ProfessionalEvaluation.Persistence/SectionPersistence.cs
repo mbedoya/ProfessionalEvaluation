@@ -15,7 +15,7 @@ namespace ProfessionalEvaluation.Persistence
 
             DataTable table = ExecuteCommand(
                 String.Format(
-                " SELECT ID, Name, Description, EstimatedDuration " + 
+                " SELECT ID, Name, Description, EstimatedDuration, Type " + 
                 " FROM section WHERE EvaluationID = {0} ", id));
             foreach (DataRow item in table.Rows)
             {
@@ -31,6 +31,7 @@ namespace ProfessionalEvaluation.Persistence
             return new SectionTO() { ID = Convert.ToInt32(item["ID"]),
                 Name = item["Name"].ToString(), 
                 Description = item["Description"].ToString(),
+                                     Type = item["Type"].ToString(),
                                      EstimatedDuration = Convert.ToDouble(item["EstimatedDuration"])
             };
         }

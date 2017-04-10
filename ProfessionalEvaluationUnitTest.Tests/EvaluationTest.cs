@@ -21,7 +21,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
             Assert.AreEqual(true, result > 0);
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void GetSections_EvaluationByIndustryAndRole_AtLeastOneSectionsReturned()
         {
             Evaluation eval = new Evaluation(DEFAULT_INDUSTRY, DEFAULT_ROLE);

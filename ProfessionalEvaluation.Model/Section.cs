@@ -1,4 +1,5 @@
-﻿using ProfessionalEvaluation.Persistence;
+﻿using ProfessionalEvaluation.Model.SectionData;
+using ProfessionalEvaluation.Persistence;
 using ProfessionalEvaluation.TO;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,13 @@ namespace ProfessionalEvaluation.Model
 {
     public class Section
     {
-        public List<SectionTO> GetByEvaluationID(int id)
+        public List<QuestionTO> GetQuestionsBySection(SectionTO section)
         {
-            List<SectionTO> list = SectionPersistence.GetByEvaluationID(id);
+            SectionDataProvider provider = SectionDataFactory.CreateProvider(section.Type);
+            List<QuestionTO> list = provider.GetQuestionsByID(section.ID);
+
             return list;
         }
+        
     }
 }

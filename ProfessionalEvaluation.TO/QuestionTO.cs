@@ -5,12 +5,10 @@ using System.Text;
 
 namespace ProfessionalEvaluation.TO
 {
-    public class SectionTO
+    public class QuestionTO
     {
         public int ID { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public double EstimatedDuration { get; set; }
+        public string Text { get; set; }
         public string Type { get; set; }
     }
 }

@@ -43,6 +43,7 @@
     <Compile Include="CompanyTO.cs" />
     <Compile Include="EvaluationTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuestionTO.cs" />
     <Compile Include="SectionTO.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
