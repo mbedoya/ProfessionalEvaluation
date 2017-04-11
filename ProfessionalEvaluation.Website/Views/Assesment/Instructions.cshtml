@@ -1,0 +1,137 @@
+﻿@{
+    Layout = "~/Views/Shared/_AssesmentLayout.cshtml";
+}
+
+@section css{
+    <!-- Custom CSS -->
+    <link href="/css/shop-homepage.css" rel="stylesheet">
+}
+
+<!-- Page Content -->
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-3">
+            <p class="lead">
+                <img id="company_logo" src="" style="visibility: hidden" />
+            </p>
+            Pruebas
+            <div id="sections" class="list-group">
+            </div>
+
+            <div id="duration">
+
+            </div>
+        </div>
+
+        <div class="col-md-9">
+
+            <!-- Header -->
+            <header class="jumbotron">
+                <h2 id="title"></h2>
+                <br />
+                <p>Instrucciones:</p>
+                <p class="small mark">
+                    1. No uses los botones del explorador para ir atrás o adelante, usa siempre los botones de nuestro sitio.
+                </p>
+                <p class="small mark">
+                    2. Ten en cuenta siempre el tiempo disponible para cada prueba, cuando el tiempo se agote la prueba se terminará automáticamente y 
+                    las preguntas no contestadas serán evaluadas como erróneas.
+                </p>
+                <p class="small mark">
+                    3. Puedes cerrar el explorar y usar de nuevo el enlace que te entregó <span id="company_name"></span> para la prueba, 
+                    volverás al punto donde estabas.
+                </p>
+                <p class="small mark">
+                    4. Desde que inicies la prueba tendrás hasta 2 días para terminarla, luego de esto ya no podrás acceder y no tendrás ninguna calificación.
+                </p>
+                <p id="btnContinue" style="visibility: hidden">
+                    <a class="btn btn-primary btn-block">Iniciar</a>
+                </p>
+            </header>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- /.container -->
+
+@section scripts{
+
+    <script>
+
+        var sectionTemplate = '<a href="#" class="list-group-item">_section_name</a>';
+        var controllerName = "Assesment";
+
+        function getSections(evaluationID) {
+
+            ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
+
+                console.log(data);
+
+                if (success) {
+
+                    if (data && data.length > 0) {
+
+                        var totalDuration = 0;
+                        for (var i = 0; i < data.length; i++) {
+
+                            var sectionText = sectionTemplate.replace("_section_name", data[i].Name);
+
+                            $("#sections").append(sectionText);
+
+                            if (data[0].EstimatedDuration) {
+                                totalDuration = totalDuration + data[i].EstimatedDuration;
+                            }
+                        }
+
+                        $("#duration").css("visibility", "visible");
+                        $("#duration").html("Duración: " + totalDuration + " horas");
+                    }
+
+                }
+            });
+        }
+
+        //Data Retrieved - Session Data
+        function handleAssementDataRetrieved(e) {
+
+            var data = e.detail.data;
+            var success = e.detail.success;
+
+            console.log(data);
+
+            if (success) {
+
+                var title = data.Evaluation.Name + " - " + data.Company.Name;
+
+                if (data.Company.Logo && data.Company.Logo.length > 0) {
+
+                    title = data.Evaluation.Name;
+
+                    $("#company_logo").attr("src", "/img/" + data.Company.Logo);
+                    $("#company_logo").css("visibility", "visible");
+                }
+
+                $("#title").html(title);
+                $("#company_name").html(data.Company.Name);
+                $("#btnContinue").css("visibility", "visible");
+
+                getSections(data.ID);
+            }
+
+        }
+
+        $(document).ready(function () {
+
+            $("#btnContinue").on("click", function () {
+                location.href = "/" + controllerName + "/Execution";
+            });
+
+        });
+    </script>
+
+}
+

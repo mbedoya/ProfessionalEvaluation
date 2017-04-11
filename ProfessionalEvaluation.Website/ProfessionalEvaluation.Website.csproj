@@ -159,6 +159,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\PublicacionLaboruTech.pubxml" />
+    <Content Include="Views\Assesment\Instructions.cshtml" />
+    <Content Include="Views\Shared\_AssesmentLayout.cshtml" />
+    <Content Include="Views\Assesment\Execution.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

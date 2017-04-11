@@ -1,131 +1,50 @@
 ﻿@{
-    Layout = null;
+    Layout = "~/Views/Shared/_AssesmentLayout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Evaluación Profesional</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+@section css{
 
     <!-- Custom CSS -->
-    <link href="/css/heroic-features.css" rel="stylesheet">
+    <link href='@Url.Content("~/css/heroic-features.css")' rel="stylesheet">
+}
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+<!-- Header -->
+<header class="jumbotron hero-spacer">
+    <img id="company_logo" src="" style="visibility: hidden" />
+    <h2 id="title"></h2>
+    <p id="evaluation_description"></p>
+    <p id="duration"></p>
+    <p id="btnContinue" style="visibility: hidden">
+        <a class="btn btn-primary btn-block">Continuar</a>
+    </p>
+</header>
 
-</head>
+<hr>
 
-<body>
+<!-- Detail -->
+<div id="detail" style="visibility: hidden">
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <!-- 
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                -->
-                <a class="navbar-brand" href="#">Evaluación Profesional</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <!-- 
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                </ul>
-            </div> -->
-            <!-- /.navbar-collapse -->
+    <!-- Title -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3>Listado de Pruebas</h3>
         </div>
-        <!-- /.container -->
-    </nav>
-
-    <!-- Page Content -->
-    <div class="container">
-
-        <!-- Jumbotron Header -->
-        <header class="jumbotron hero-spacer">
-            <img id="company_logo" src="" style="visibility: hidden" />
-            <h3 id="title"></h3>
-            <p id="evaluation_description"></p>
-            <p id="duration"></p>
-            <p id="btnContinue" style="visibility: hidden">
-                <a id="btnContinue" class="btn btn-primary btn-block" >Continuar</a>
-            </p>
-        </header>
-
-        <hr>
-
-        <div id="detail" style="visibility:hidden">
-
-            <!-- Title -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <h3>Listado de Pruebas</h3>
-                </div>
-            </div>
-            <!-- /.row -->
-
-            <!-- Page Features -->
-            <div id="sectionDiv1" class="row text-center">
-
-            </div>
-            <!-- /.row -->
-
-        </div>
-
-
-
-        <hr>
-
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Laboru Tech</p>
-                </div>
-            </div>
-        </footer>
-
     </div>
-    <!-- /.container -->
+    <!-- /.row -->
 
-    <!-- jQuery -->
-    <script src="/js/jquery.js"></script>
+    <!-- Page Features -->
+    <div id="sectionDiv1" class="row text-center">
+    </div>
+    <!-- /.row -->
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/js/bootstrap.min.js"></script>
+</div>
+
+@section scripts{
 
     <script>
 
-        var sectionTemplate =  '<div class="col-md-3 col-sm-6 hero-feature">' +
+        var controllerName = "Assesment";
+        var sectionTemplate = '<div class="col-md-3 col-sm-6 hero-feature">' +
                                     '<div class="thumbnail" >' +
                                         '<div class="caption" style="min-height:220px">' +
                                             '<h3>_section_name</h3>' +
@@ -137,119 +56,95 @@
                                     '</div>' +
                                 '</div>';
 
-        $(document).ready(function () {
+        function getSections(evaluationID) {
+
+            //Get Sections
+            ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
+
+                console.log(data);
+
+                if (success) {
+
+                    if (data && data.length > 0) {
+                        $("#detail").css("visibility", "visible");
+
+                        var totalDuration = 0;
+                        var sectionIndex = 1;
+                        var currentIndex;
+                        var sectionsPerRow = 4;
+                        for (var i = 0; i < data.length; i++) {
+
+                            if (i % sectionsPerRow == 0) {
+                                $("#detail").append('<div id="sectionDiv' + sectionIndex + '" class="row text-center"></div>');
+                                currentIndex = sectionIndex;
+                                sectionIndex = sectionIndex + 1;
+                            }
+
+                            var sectionText = sectionTemplate.replace("_section_name", data[i].Name)
+                            .replace("_section_description", data[i].Description)
+                            .replace("_section_duration", data[i].EstimatedDuration);
+
+                            $("#sectionDiv" + currentIndex).append(sectionText);
+
+                            if (data[0].EstimatedDuration) {
+                                totalDuration = totalDuration + data[i].EstimatedDuration;
+                            }
+                        }
+
+                        $("#duration").css("visibility", "visible");
+                        $("#duration").html("Duración estimada: " + totalDuration + " horas");
+                    }
+
+                }
+            });
+        }
+
+        //Data Retrieved Event - Session Data
+        function handleAssementDataRetrieved(e) {
+
+            var data = e.detail.data;
+            var success = e.detail.success;
+
+            console.log(data);
+
+            if (success) {
+
+                if (data && data.Company) {
+
+                    var title = data.Evaluation.Name + " - " + data.Company.Name;
+
+                    if (data.Company.Logo && data.Company.Logo.length > 0) {
+
+                        title = data.Evaluation.Name;
+
+                        $("#company_logo").attr("src", "/img/" + data.Company.Logo);
+                        $("#company_logo").css("visibility", "visible");
+                    }
+
+                    $("#title").html(title);
+                    $("#evaluation_description").html(data.Evaluation.Description);
+
+                    $("#btnContinue").css("visibility", "visible");
+
+                    getSections(data.Evaluation.ID);
+
+                } else {
+
+                    $("#title").html("Lo sentimos, no encontramos tu prueba");
+                }
+
+            } else {
+                $("#title").html("Lo sentimos, se ha presentado en error");
+            }
+        }
+
+        $(document).ready(function () {            
 
             $("#btnContinue").on("click", function () {
-                //location.href = '@Url.Content("~/Assesment/Instructions")';
-                location.href = "/Assesment/Instructions";
+                location.href = "/" + controllerName + "/Instructions";
             });
 
-            function ajaxPost(controller, method, data, fx) {
-
-                $.ajax({
-                    url: "/" + controller + "/" + method,
-                    dataType: "json",
-                    type: "POST",
-                    data: data,
-                    success: function (data) {
-                        fx(true, data);
-                    },
-                    error: function (a, b, c) {
-                        fx(false, a);
-                    }
-                });
-            }
-
-            function getSections(evaluationID) {
-
-                //Get Sections
-                ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
-
-                    console.log(data);
-
-                    if (success) {
-
-                        if (data && data.length > 0) {
-                            $("#detail").css("visibility", "visible");
-
-                            var totalDuration = 0;
-                            var sectionIndex = 1;
-                            var currentIndex;
-                            var sectionsPerRow = 4;
-                            for (var i = 0; i < data.length; i++) {
-
-                                if (i%sectionsPerRow == 0) {
-                                    $("#detail").append('<div id="sectionDiv' + sectionIndex + '" class="row text-center"></div>');
-                                    currentIndex = sectionIndex;
-                                    sectionIndex = sectionIndex + 1;
-                                }
-
-                                var sectionText = sectionTemplate.replace("_section_name", data[i].Name)
-                                .replace("_section_description", data[i].Description)
-                                .replace("_section_duration", data[i].EstimatedDuration);
-
-                                $("#sectionDiv" + currentIndex).append(sectionText);
-
-                                if (data[0].EstimatedDuration) {
-                                    totalDuration = totalDuration + data[i].EstimatedDuration;
-                                }
-                            }
-
-                            $("#duration").css("visibility", "visible");
-                            $("#duration").html("Duración estimada: " + totalDuration + " horas");
-                        }
-
-                    }
-                });
-            }
-
-            function getAssesmentData() {
-
-                ajaxPost("Assesment", "GetData", {}, function (success, data) {
-
-                    console.log(data);
-
-                    if (success) {
-
-                        if (data && data.Company) {
-
-                            var title = data.Evaluation.Name + " - " + data.Company.Name;
-
-                            if (data.Company.Logo && data.Company.Logo.length > 0) {
-
-                                title = data.Evaluation.Name;
-
-                                $("#company_logo").attr("src", "/img/" + data.Company.Logo);
-                                $("#company_logo").css("visibility", "visible");
-                            }
-
-                            $("#title").html(title);
-                            $("#evaluation_description").html(data.Evaluation.Description);
-
-                            $("#btnContinue").css("visibility", "visible");
-
-                            getSections(data.Evaluation.ID);
-
-                        } else {
-
-                            $("#title").html("Lo sentimos, no encontramos tu prueba");
-                        }
-
-                    } else {
-                        $("#title").html("Lo sentimos, se ha presentado en error");
-                    }
-                });
-            }
-
-            function init() {
-                getAssesmentData();
-            }
-
-            init();
         });
     </script>
 
-
-</body>
-
-</html>
+}
