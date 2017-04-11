@@ -77,7 +77,7 @@
             <p id="evaluation_description"></p>
             <p id="duration"></p>
             <p id="btnContinue" style="visibility: hidden">
-                <a class="btn btn-primary btn-block">Continuar</a>
+                <a id="btnContinue" class="btn btn-primary btn-block" >Continuar</a>
             </p>
         </header>
 
@@ -138,6 +138,11 @@
                                 '</div>';
 
         $(document).ready(function () {
+
+            $("#btnContinue").on("click", function () {
+                //location.href = '@Url.Content("~/Assesment/Instructions")';
+                location.href = "/Assesment/Instructions";
+            });
 
             function ajaxPost(controller, method, data, fx) {
 
