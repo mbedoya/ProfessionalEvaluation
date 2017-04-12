@@ -24,12 +24,5 @@ namespace ProfessionalEvaluation.Website.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetSections(int evaluationID)
-        {
-            Evaluation evaluation = new Evaluation(evaluationID);
-            List<SectionTO> list = evaluation.GetSections();
-            return Json(list, JsonRequestBehavior.AllowGet);
-        }
-
     }
 }

@@ -88,9 +88,8 @@
         $(document).ready(function () {
 
             function init() {
-                ajaxPost("Assesment", "GetData", {}, function (success, data) {
 
-                    console.log("Assesment got data");
+                ajaxPost("Assesment", "GetData", {}, function (success, data) {
 
                     var myEvent = new CustomEvent("AssesmentDataRetrieved",
                         {
@@ -101,6 +100,32 @@
                         }
                     );
                     document.body.dispatchEvent(myEvent);
+
+                    if (success) {
+
+                        //Set Title and Logo
+                        if (data && data.Company) {
+
+                            var title = data.Evaluation.Name + " - " + data.Company.Name;
+
+                            if (data.Company.Logo && data.Company.Logo.length > 0) {
+
+                                title = data.Evaluation.Name;
+
+                                $("#company_logo").attr("src", "/img/" + data.Company.Logo);
+                                $("#company_logo").css("visibility", "visible");
+                            }
+
+                            $("#title").html(title);
+                        } else {
+                            $("#title").html("Lo sentimos, no encontramos tu prueba");
+                        }
+
+                    } else {
+                        $("#title").html("Lo sentimos, se ha presentado en error");
+                    }
+
+                    
                 });
             }
 

@@ -65,34 +65,25 @@
         var sectionTemplate = '<a href="#" class="list-group-item">_section_name</a>';
         var controllerName = "Assesment";
 
-        function getSections(evaluationID) {
+        function showSectionsData(data) {
 
-            ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
+            if (data && data.length > 0) {
 
-                console.log(data);
+                var totalDuration = 0;
+                for (var i = 0; i < data.length; i++) {
 
-                if (success) {
+                    var sectionText = sectionTemplate.replace("_section_name", data[i].Name);
 
-                    if (data && data.length > 0) {
+                    $("#sections").append(sectionText);
 
-                        var totalDuration = 0;
-                        for (var i = 0; i < data.length; i++) {
-
-                            var sectionText = sectionTemplate.replace("_section_name", data[i].Name);
-
-                            $("#sections").append(sectionText);
-
-                            if (data[0].EstimatedDuration) {
-                                totalDuration = totalDuration + data[i].EstimatedDuration;
-                            }
-                        }
-
-                        $("#duration").css("visibility", "visible");
-                        $("#duration").html("Duración: " + totalDuration + " horas");
+                    if (data[0].EstimatedDuration) {
+                        totalDuration = totalDuration + data[i].EstimatedDuration;
                     }
-
                 }
-            });
+
+                $("#duration").css("visibility", "visible");
+                $("#duration").html("Duración: " + totalDuration + " horas");
+            }
         }
 
         //Data Retrieved - Session Data
@@ -105,21 +96,10 @@
 
             if (success) {
 
-                var title = data.Evaluation.Name + " - " + data.Company.Name;
-
-                if (data.Company.Logo && data.Company.Logo.length > 0) {
-
-                    title = data.Evaluation.Name;
-
-                    $("#company_logo").attr("src", "/img/" + data.Company.Logo);
-                    $("#company_logo").css("visibility", "visible");
-                }
-
-                $("#title").html(title);
                 $("#company_name").html(data.Company.Name);
                 $("#btnContinue").css("visibility", "visible");
 
-                getSections(data.ID);
+                showSectionsData(data.Evaluation.Sections);
             }
 
         }
@@ -127,7 +107,27 @@
         $(document).ready(function () {
 
             $("#btnContinue").on("click", function () {
-                location.href = "/" + controllerName + "/Execution";
+
+                ajaxPost("Assesment", "Start", {}, function (success, data) {
+
+                    console.log(data);
+
+                    if (success) {
+                        if (data && data.result) {
+
+                            if (data.result.toLowerCase() == "successful") {
+                                location.href = "/" + controllerName + "/Execution";
+                            } else {
+
+                                console.log(data.result);
+
+                            }
+                        }
+                    }
+
+                });
+
+                
             });
 
         });

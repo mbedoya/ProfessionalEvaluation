@@ -44,6 +44,8 @@
     <script>
 
         var controllerName = "Assesment";
+        var instructionsUrl = "/" + controllerName + "/Instructions";
+
         var sectionTemplate = '<div class="col-md-3 col-sm-6 hero-feature">' +
                                     '<div class="thumbnail" >' +
                                         '<div class="caption" style="min-height:220px">' +
@@ -56,47 +58,37 @@
                                     '</div>' +
                                 '</div>';
 
-        function getSections(evaluationID) {
+        function showSectionsData(data) {
 
-            //Get Sections
-            ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
+            if (data && data.length > 0) {
+                $("#detail").css("visibility", "visible");
 
-                console.log(data);
+                var totalDuration = 0;
+                var sectionIndex = 1;
+                var currentIndex;
+                var sectionsPerRow = 4;
+                for (var i = 0; i < data.length; i++) {
 
-                if (success) {
-
-                    if (data && data.length > 0) {
-                        $("#detail").css("visibility", "visible");
-
-                        var totalDuration = 0;
-                        var sectionIndex = 1;
-                        var currentIndex;
-                        var sectionsPerRow = 4;
-                        for (var i = 0; i < data.length; i++) {
-
-                            if (i % sectionsPerRow == 0) {
-                                $("#detail").append('<div id="sectionDiv' + sectionIndex + '" class="row text-center"></div>');
-                                currentIndex = sectionIndex;
-                                sectionIndex = sectionIndex + 1;
-                            }
-
-                            var sectionText = sectionTemplate.replace("_section_name", data[i].Name)
-                            .replace("_section_description", data[i].Description)
-                            .replace("_section_duration", data[i].EstimatedDuration);
-
-                            $("#sectionDiv" + currentIndex).append(sectionText);
-
-                            if (data[0].EstimatedDuration) {
-                                totalDuration = totalDuration + data[i].EstimatedDuration;
-                            }
-                        }
-
-                        $("#duration").css("visibility", "visible");
-                        $("#duration").html("Duración estimada: " + totalDuration + " horas");
+                    if (i % sectionsPerRow == 0) {
+                        $("#detail").append('<div id="sectionDiv' + sectionIndex + '" class="row text-center"></div>');
+                        currentIndex = sectionIndex;
+                        sectionIndex = sectionIndex + 1;
                     }
 
+                    var sectionText = sectionTemplate.replace("_section_name", data[i].Name)
+                    .replace("_section_description", data[i].Description)
+                    .replace("_section_duration", data[i].EstimatedDuration);
+
+                    $("#sectionDiv" + currentIndex).append(sectionText);
+
+                    if (data[0].EstimatedDuration) {
+                        totalDuration = totalDuration + data[i].EstimatedDuration;
+                    }
                 }
-            });
+
+                $("#duration").css("visibility", "visible");
+                $("#duration").html("Duración estimada: " + totalDuration + " horas");
+            }
         }
 
         //Data Retrieved Event - Session Data
@@ -109,39 +101,21 @@
 
             if (success) {
 
-                if (data && data.Company) {
+                if (data && data.Evaluation) {
 
-                    var title = data.Evaluation.Name + " - " + data.Company.Name;
-
-                    if (data.Company.Logo && data.Company.Logo.length > 0) {
-
-                        title = data.Evaluation.Name;
-
-                        $("#company_logo").attr("src", "/img/" + data.Company.Logo);
-                        $("#company_logo").css("visibility", "visible");
-                    }
-
-                    $("#title").html(title);
                     $("#evaluation_description").html(data.Evaluation.Description);
-
                     $("#btnContinue").css("visibility", "visible");
 
-                    getSections(data.Evaluation.ID);
+                    showSectionsData(data.Evaluation.Sections);
 
-                } else {
-
-                    $("#title").html("Lo sentimos, no encontramos tu prueba");
-                }
-
-            } else {
-                $("#title").html("Lo sentimos, se ha presentado en error");
-            }
+                } 
+            } 
         }
 
         $(document).ready(function () {            
 
             $("#btnContinue").on("click", function () {
-                location.href = "/" + controllerName + "/Instructions";
+                location.href = instructionsUrl;
             });
 
         });

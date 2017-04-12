@@ -14,6 +14,11 @@ namespace ProfessionalEvaluation.Persistence
             DataSet dataSet = new DataSet();
             adapter.Fill(dataSet);
 
+            if (dataSet.Tables.Count == 0)
+            {
+                return null;
+            }
+
             return dataSet.Tables[0];
         }
     }

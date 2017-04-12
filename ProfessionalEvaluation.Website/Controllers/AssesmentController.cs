@@ -10,7 +10,6 @@ namespace ProfessionalEvaluation.Website.Controllers
 {
     public class AssesmentController : Controller
     {
-        private const string SESSION_ASSESMENT_ID = "AssesmentID";
         private const string SESSION_ASSESMENT_OBJECT = "Assesment";
         private const string QUERY_STRING_ID = "id";
 
@@ -23,30 +22,16 @@ namespace ProfessionalEvaluation.Website.Controllers
 
             if (!String.IsNullOrEmpty(assesmentID))
             {
-                Session[SESSION_ASSESMENT_ID] = assesmentID;
-
-                Assesment assesment = new Assesment();
-                Session[SESSION_ASSESMENT_OBJECT] = assesment.GetByAssesmentID(assesmentID); ;
+                Assesment assesment = new Assesment(assesmentID);
+                Session[SESSION_ASSESMENT_OBJECT] = assesment;
             }
 
-            return View();
+            return CheckAndRoute();
         }
 
         public ActionResult Instructions()
         {
-            return View();
-        }
-
-        public ActionResult GetData()
-        {
-            AssesmentTO data = Session[SESSION_ASSESMENT_OBJECT] != null ? (AssesmentTO)Session[SESSION_ASSESMENT_OBJECT] : null;
-            
-            if (data == null)
-            {
-                return Json(new { }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(data, JsonRequestBehavior.AllowGet);
+            return CheckAndRoute();
         }
 
         public ActionResult Execution()
@@ -54,5 +39,45 @@ namespace ProfessionalEvaluation.Website.Controllers
             return View();
         }
 
+        public ActionResult GetData()
+        {
+            Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;
+
+            if (assesment == null)
+            {
+                return Json(new { }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(assesment.GetInfo(), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Start()
+        {
+            Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;
+
+            if (assesment == null)
+            {
+                return Json(new { }, JsonRequestBehavior.AllowGet);                    
+            }
+
+            AssesmentStartOperationState state = assesment.Start();
+
+            return Json(new { result = state.ToString() }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult CheckAndRoute()
+        {
+            Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;
+
+            if (assesment != null)
+            {
+                if (assesment.GetInfo().AlreadyStarted)
+                {
+                    return View("Execution");
+                }
+            }
+
+            return View();
+        }
     }
 }
