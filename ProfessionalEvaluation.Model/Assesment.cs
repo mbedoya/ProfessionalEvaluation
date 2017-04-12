@@ -32,10 +32,20 @@ namespace ProfessionalEvaluation.Model
             }
         }
 
-        public void InitAdditionalData()
+        private void InitAdditionalData()
         {
             GetSections();
             CreateContext();
+        }
+
+        public AssesmentContextTO GetCurrentContext()
+        {
+            return currentContext;
+        }
+
+        public AssesmentTO GetInfo()
+        {
+            return info;
         }
 
         private void GetSections()
@@ -85,19 +95,9 @@ namespace ProfessionalEvaluation.Model
             return AssesmentStartOperationState.Successful;
         }
 
-        public AssesmentContextTO GetCurrentContext()
-        {
-            return currentContext;
-        }
-
-        public AssesmentTO GetInfo()
-        {
-            return info;
-        }
-
         private void CreateContext()
         {
-            if (info != null && info.AlreadyStarted)
+            if (info != null)
             {
                 currentContext = new AssesmentContextTO() { SectionIndex = 1, QuestionIndex = 1, MinutesLeft = 60 };
 
