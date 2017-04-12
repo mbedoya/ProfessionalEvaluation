@@ -51,6 +51,18 @@ namespace ProfessionalEvaluation.Website.Controllers
             return Json(assesment.GetInfo(), JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetContext()
+        {
+            Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;
+
+            if (assesment == null)
+            {
+                return Json(new { }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(assesment.GetCurrentContext(), JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Start()
         {
             Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;

@@ -94,7 +94,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
             Assesment a = new Assesment(DEFAULT_ID);
             AssesmentContextTO context = a.GetCurrentContext();
             Assert.AreEqual(1, context.QuestionIndex);
-        }
+        }        
 
         [TestMethod]
         public void AnswerQuestion_ResponseIsValid_AnswerQuestionSuccessful()
@@ -136,6 +136,31 @@ namespace ProfessionalEvaluationUnitTest.Tests
         {
             doCleanUp = true;
             Assesment a = new Assesment(DEFAULT_ID);
+            AssesmentStartOperationState state = a.Start();
+            Assert.AreEqual(AssesmentStartOperationState.AlreadyStarted, state);
+        }
+
+        [TestMethod]
+        public void Start_ByAssesmentIdStartedSuccessfully_SuccessfulResult()
+        {
+            Assesment a = new Assesment(DEFAULT_ASSESMENT_ID);
+            AssesmentStartOperationState state = a.Start();
+            Assert.AreEqual(AssesmentStartOperationState.Successful, state);
+        }
+
+        [TestMethod]
+        public void GetContext_ByAssesmentIdJustStarted_InitialDataSectionIs1()
+        {
+            Assesment a = new Assesment(DEFAULT_ASSESMENT_ID);
+            AssesmentContextTO context = a.GetCurrentContext();
+            Assert.AreEqual(1, context.SectionIndex);
+        }
+
+        [TestMethod]
+        public void Start_ByAssesmentIdAlreadyStarted_AlreadyStartedResult()
+        {
+            doCleanUp = true;
+            Assesment a = new Assesment(DEFAULT_ASSESMENT_ID);
             AssesmentStartOperationState state = a.Start();
             Assert.AreEqual(AssesmentStartOperationState.AlreadyStarted, state);
         }

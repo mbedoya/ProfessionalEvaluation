@@ -17,35 +17,28 @@
             <p class="lead">
                 <img id="company_logo" src="" style="visibility: hidden" />
             </p>
-            Pruebas
+            
             <div id="sections" class="list-group">
-            </div>
-
-            <div id="duration">
-
             </div>
 
             <hr />
 
-            <p>0% Completado - Pregunta 1 de 2</p>
+            <p>Pregunta <span id="questionIndex"></span> de <span id="totalQuestions"></span></p>
 
             <p>
-                Te quedan 59 minutos
+                Te quedan <span id="minutesLeft"></span> minutos
             </p>
-
-            
-            
         </div>
 
         <div class="col-md-9">
 
             <!-- Header -->
-            <header >
+            <header>
                 <p id="title"></p>
-                
+
             </header>
 
-            <h3 class="mark">1.¿Qué te ha gustado más?</h3>
+            <h3 id="questionText" class="mark"></h3>
 
         </div>
 
@@ -58,35 +51,44 @@
 
     <script>
 
-        var sectionTemplate = '<a href="#" class="list-group-item">_section_name</a>';
+        var sectionTemplate = '<a id="section_id_num" href="#" class="list-group-item">_section_name</a>';
         var controllerName = "Assesment";
 
-        function getSections(evaluationID) {
+        function showSectionData(data) {
 
-            ajaxPost("Evaluation", "GetSections", { evaluationID: evaluationID }, function (success, data) {
+            if (data && data.length > 0) {
+
+                var totalDuration = 0;
+                for (var i = 0; i < data.length; i++) {
+
+                    var sectionText = sectionTemplate.replace("_section_name", data[i].Name)
+                    .replace("_num", i+1);
+
+                    $("#sections").append(sectionText);
+
+                    if (data[0].EstimatedDuration) {
+                        totalDuration = totalDuration + data[i].EstimatedDuration;
+                    }
+                }
+
+                //$("#duration").css("visibility", "visible");
+                //$("#duration").html("Duración: " + totalDuration + " horas");
+            }
+        }
+
+        function getContextInfo() {
+            ajaxPost(controllerName, "GetContext", {}, function (success, data) {
 
                 console.log(data);
 
                 if (success) {
-
-                    if (data && data.length > 0) {
-
-                        var totalDuration = 0;
-                        for (var i = 0; i < data.length; i++) {
-
-                            var sectionText = sectionTemplate.replace("_section_name", data[i].Name);
-
-                            $("#sections").append(sectionText);
-
-                            if (data[0].EstimatedDuration) {
-                                totalDuration = totalDuration + data[i].EstimatedDuration;
-                            }
-                        }
-
-                        //$("#duration").css("visibility", "visible");
-                        //$("#duration").html("Duración: " + totalDuration + " horas");
+                    if (data && data.CurrentSectionQuestions) {
+                        $("#questionText").html(data.QuestionIndex + ". " + data.CurrentSectionQuestions[data.QuestionIndex - 1].Text);
+                        $("#questionIndex").html(data.QuestionIndex);
+                        $("#totalQuestions").html(data.CurrentSectionQuestions.length);
+                        $("#minutesLeft").html(data.MinutesLeft);
+                        $("#section_id" + data.SectionIndex).addClass("active");
                     }
-
                 }
             });
         }
@@ -115,7 +117,9 @@
                 $("#company_name").html(data.Company.Name);
                 $("#btnContinue").css("visibility", "visible");
 
-                getSections(data.ID);
+                showSectionData(data.Evaluation.Sections);
+
+                getContextInfo();
             }
 
         }

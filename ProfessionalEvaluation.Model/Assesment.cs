@@ -18,8 +18,7 @@ namespace ProfessionalEvaluation.Model
         {
             this.id = id;
             info = AssesmentPersistence.GetByID(id);
-            GetSections();
-            CreateContext();
+            InitAdditionalData();
         }
 
         public Assesment(string assesmentID)
@@ -29,8 +28,14 @@ namespace ProfessionalEvaluation.Model
             {
                 this.assesmentID = assesmentID;
                 this.id = info.ID;
-                GetSections();
+                InitAdditionalData();
             }
+        }
+
+        public void InitAdditionalData()
+        {
+            GetSections();
+            CreateContext();
         }
 
         private void GetSections()
