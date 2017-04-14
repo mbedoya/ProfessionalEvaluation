@@ -10,10 +10,16 @@ namespace ProfessionalEvaluation.Persistence
     public class DataAdapterFactory
     {
         private static string DB_AppSetting = "Database";
+        private static string AssesmentExecutionDB_AppSetting = "Database";
 
         public static IDataAdapter CreateAdapter(string command)
         {
             return new MySql.Data.MySqlClient.MySqlDataAdapter(command, new MySql.Data.MySqlClient.MySqlConnection(ConfigurationManager.AppSettings[DB_AppSetting]));
+        }
+
+        public static IDataAdapter CreateAssesmentExecutionAdapter(string command)
+        {
+            return new MySql.Data.MySqlClient.MySqlDataAdapter(command, new MySql.Data.MySqlClient.MySqlConnection(ConfigurationManager.AppSettings[AssesmentExecutionDB_AppSetting]));
         }
     }
 }

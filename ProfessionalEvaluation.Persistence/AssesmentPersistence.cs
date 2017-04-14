@@ -56,6 +56,42 @@ namespace ProfessionalEvaluation.Persistence
             return element;
         }
 
+        public static void CreateContext(int assesmentID, AssesmentContextTO context)
+        {
+            string execCommand = String.Format("INSERT INTO assesment_context (AssesmentID, SectionIndex, QuestionIndex, MinutesLeft) " +
+                " VALUES ({0},{1},{2},{3})", assesmentID, context.SectionIndex, context.QuestionIndex, context.MinutesLeft);
+            ExecuteAssementExecutionCommand(execCommand);
+        }
+
+        public static void UpdateContext(int assesmentID, AssesmentContextTO context)
+        {
+            string execCommand = String.Format("UPDATE assesment_context " + 
+                " SET SectionIndex={1}, QuestionIndex={2}, MinutesLeft={3} " +
+                " WHERE AssesmentID = {0}", assesmentID, context.SectionIndex, context.QuestionIndex, context.MinutesLeft);
+            ExecuteAssementExecutionCommand(execCommand);
+        }
+
+        public static AssesmentContextTO GetContextByAssesmentID(int id)
+        {
+            AssesmentContextTO currentContext = null;
+
+            string execCommand = String.Format("SELECT SectionIndex, QuestionIndex, MinutesLeft " +
+                " FROM assesment_context " +
+                " WHERE AssesmentID = {0}", id);
+
+            DataTable table = ExecuteAssementExecutionCommand(execCommand);
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                currentContext = new AssesmentContextTO();
+                currentContext.SectionIndex = Convert.ToInt32(table.Rows[0]["SectionIndex"]);
+                currentContext.QuestionIndex = Convert.ToInt32(table.Rows[0]["QuestionIndex"]);
+                currentContext.MinutesLeft = Convert.ToInt32(table.Rows[0]["MinutesLeft"]);
+            }
+
+            return currentContext;
+        }
+
         private static AssesmentTO MapElement(DataTable table)
         {
             AssesmentTO element = null;

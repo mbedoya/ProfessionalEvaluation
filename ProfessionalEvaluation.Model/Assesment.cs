@@ -18,7 +18,10 @@ namespace ProfessionalEvaluation.Model
         {
             this.id = id;
             info = AssesmentPersistence.GetByID(id);
-            InitAdditionalData();
+            if (info != null)
+            {
+                InitAdditionalData();                
+            }
         }
 
         public Assesment(string assesmentID)
@@ -59,6 +62,7 @@ namespace ProfessionalEvaluation.Model
         public void Restart()
         {
             AssesmentPersistence.Restart(id);
+            AssesmentPersistence.UpdateContext(id, GetDefaultContext());
         }
 
         public AssesmentAnswerQuestionResult AnswerQuestion(int responseIndex)
@@ -68,12 +72,37 @@ namespace ProfessionalEvaluation.Model
                 return AssesmentAnswerQuestionResult.InvalidResponse;
             }
 
+            if (SectionHasNextQuestion())
+            {
+                currentContext.QuestionIndex++;
+            }
+            else
+            {
+                if (EvaluationHasNextSection())
+                {
+                    currentContext.SectionIndex++;
+                    currentContext.QuestionIndex = 1;
+                }
+            }
+            AssesmentPersistence.UpdateContext(id, currentContext);
+
             return AssesmentAnswerQuestionResult.Successful;
+        }
+
+        private bool SectionHasNextQuestion()
+        {
+            return currentContext.CurrentSectionQuestions.Count > currentContext.QuestionIndex;
+        }
+
+        public bool EvaluationHasNextSection()
+        {
+            return info.Evaluation.Sections.Count > currentContext.SectionIndex;
         }
 
         public void UpdateLeftTime()
         {
             currentContext.MinutesLeft = currentContext.MinutesLeft - 1;
+            AssesmentPersistence.UpdateContext(id, currentContext);
         }
 
         public AssesmentStartOperationState Start()
@@ -89,6 +118,7 @@ namespace ProfessionalEvaluation.Model
             }
 
             info.DateStarted = DateTime.Now;
+            info.AlreadyStarted = true;
             AssesmentPersistence.SetStartDate(id);
             CreateContext();
 
@@ -97,13 +127,33 @@ namespace ProfessionalEvaluation.Model
 
         private void CreateContext()
         {
-            if (info != null)
+            if (info != null )
             {
-                currentContext = new AssesmentContextTO() { SectionIndex = 1, QuestionIndex = 1, MinutesLeft = 60 };
+                if (!info.AlreadyStarted)
+                {
+                    currentContext = GetDefaultContext();
+                    currentContext.MinutesLeft = ConvertEstimatedDurationToMinutesLeft(info.Evaluation.Sections[0].EstimatedDuration);
 
-                Section section = new Section();
-                currentContext.CurrentSectionQuestions = section.GetQuestionsBySection(info.Evaluation.Sections[currentContext.SectionIndex - 1]);
-            }
+                    AssesmentPersistence.CreateContext(id, currentContext);
+                }
+                else
+                {
+                    currentContext = AssesmentPersistence.GetContextByAssesmentID(id);
+                }
+            }            
+
+            Section section = new Section();
+            currentContext.CurrentSectionQuestions = section.GetQuestionsBySection(info.Evaluation.Sections[currentContext.SectionIndex - 1]);
+        }
+
+        private AssesmentContextTO GetDefaultContext()
+        {
+            return new AssesmentContextTO() { QuestionIndex = 1, SectionIndex = 1, MinutesLeft = 60 };
+        }
+
+        private int ConvertEstimatedDurationToMinutesLeft(double estimatedDuration)
+        {
+            return Convert.ToInt32(estimatedDuration * 60);
         }
     }
 }

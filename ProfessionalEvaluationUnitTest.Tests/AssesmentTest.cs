@@ -113,6 +113,61 @@ namespace ProfessionalEvaluationUnitTest.Tests
         }
 
         [TestMethod]
+        public void AnswerQuestion_MoreQuestionsInSection_QuestionIndexIncreased()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            AssesmentContextTO beforeContext = a.GetCurrentContext();
+            AssesmentAnswerQuestionResult result = a.AnswerQuestion(1);
+            AssesmentContextTO afterContext = a.GetCurrentContext();
+
+            if (beforeContext.CurrentSectionQuestions.Count < beforeContext.QuestionIndex)
+            {
+                Assert.AreEqual(beforeContext.QuestionIndex + 1, afterContext.QuestionIndex);
+            }
+            else
+            {
+                Assert.AreEqual(true, true);
+            }
+        }
+
+        [TestMethod]
+        public void AnswerQuestion_NoMoreQuestionsInSection_SectionIndexIncreased()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            AssesmentContextTO beforeContext = a.GetCurrentContext();
+            AssesmentAnswerQuestionResult result = a.AnswerQuestion(1);
+            AssesmentContextTO afterContext = a.GetCurrentContext();
+
+            if (a.GetInfo().Evaluation.Sections.Count < beforeContext.SectionIndex)
+            {
+                Assert.AreEqual(beforeContext.SectionIndex + 1, afterContext.SectionIndex);
+            }
+            else
+            {
+                Assert.AreEqual(true, true);
+            }
+        }
+
+        [TestMethod]
+        public void AnswerQuestion_LastQuestion_IndexesNotUpdated()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            AssesmentContextTO beforeContext = a.GetCurrentContext();
+            AssesmentAnswerQuestionResult result = a.AnswerQuestion(1);
+            AssesmentContextTO afterContext = a.GetCurrentContext();
+
+            if (a.GetInfo().Evaluation.Sections.Count == beforeContext.SectionIndex 
+                && beforeContext.CurrentSectionQuestions.Count == beforeContext.QuestionIndex)
+            {
+                Assert.AreEqual(beforeContext.SectionIndex, afterContext.SectionIndex);
+            }
+            else
+            {
+                Assert.AreEqual(true, true);
+            }
+        }
+
+        [TestMethod]
         public void UpdateLeftTime_LeftTimeIsUpdated_LeftTimeMinus1()
         {
             Assesment a = new Assesment(DEFAULT_ID);
@@ -121,6 +176,19 @@ namespace ProfessionalEvaluationUnitTest.Tests
             a.UpdateLeftTime();
             context = a.GetCurrentContext();
             Assert.AreEqual(minutesLeft - 1, context.MinutesLeft);
+        }
+
+        [TestMethod]
+        public void UpdateLeftTime_NewObjectLeftTimeIsUpdated_LeftTimeMinus1()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            AssesmentContextTO context = a.GetCurrentContext();
+            int minutesLeft = context.MinutesLeft;
+            a.UpdateLeftTime();
+
+            Assesment b = new Assesment(DEFAULT_ID);
+            AssesmentContextTO context2 = b.GetCurrentContext();
+            Assert.AreEqual(minutesLeft - 1, context2.MinutesLeft);
         }
 
         [TestMethod]
