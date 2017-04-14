@@ -77,6 +77,18 @@ namespace ProfessionalEvaluation.Website.Controllers
             return Json(new { result = state.ToString() }, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult AnswerQuestion(int responseIndex)
+        {
+            Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;
+
+            if (assesment == null)
+            {
+                return Json(new { }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { result = assesment.AnswerQuestion(responseIndex).ToString()}, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult CheckAndRoute()
         {
             Assesment assesment = Session[SESSION_ASSESMENT_OBJECT] != null ? (Assesment)Session[SESSION_ASSESMENT_OBJECT] : null;

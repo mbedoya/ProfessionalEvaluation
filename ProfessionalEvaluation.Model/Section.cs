@@ -17,6 +17,14 @@ namespace ProfessionalEvaluation.Model
 
             return list;
         }
+
+        public List<QuestionResponseTO> GetResponsesBySection(SectionTO section)
+        {
+            SectionDataProvider provider = SectionDataFactory.CreateProvider(section.Type);
+            List<QuestionResponseTO> list = provider.GetQuestionsResponsesByID(section.ID);
+
+            return list;
+        }
         
     }
 }

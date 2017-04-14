@@ -21,7 +21,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
         {
             Assesment a = new Assesment(DEFAULT_ASSESMENT_ID);
             AssesmentTO to = a.GetInfo();
-            Assert.AreEqual(true, to != null);
+            Assert.IsNotNull(to);
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
         {
             Assesment a = new Assesment("xxx");
             AssesmentTO to = a.GetInfo();
-            Assert.AreEqual(null, to);
+            Assert.IsNull(to);
         }
 
         [TestMethod]
@@ -97,11 +97,21 @@ namespace ProfessionalEvaluationUnitTest.Tests
         }        
 
         [TestMethod]
-        public void AnswerQuestion_ResponseIsValid_AnswerQuestionSuccessful()
+        public void AnswerQuestion_ResponseIsValid_AnswerIsSuccessful()
         {
+            int responseIndex = 1;
             Assesment a = new Assesment(DEFAULT_ID);
-            AssesmentAnswerQuestionResult result = a.AnswerQuestion(1);
-            Assert.AreEqual(AssesmentAnswerQuestionResult.Successful, result);
+            AssesmentAnswerQuestionResult result = a.AnswerQuestion(responseIndex);
+            Assert.AreEqual(true, a.ResponseWasRight());
+        }
+
+        [TestMethod]
+        public void AnswerQuestion_ResponseIsValid_AnswerIsWrong()
+        {
+            int responseIndex = 2;
+            Assesment a = new Assesment(DEFAULT_ID);
+            AssesmentAnswerQuestionResult result = a.AnswerQuestion(responseIndex);
+            Assert.IsFalse(a.ResponseWasRight());
         }
 
         [TestMethod]

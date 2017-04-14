@@ -11,6 +11,9 @@ namespace ProfessionalEvaluation.Model
     {
         private int id;
         private string assesmentID;
+        private int currentQuestionAnswerIndex;
+        private bool responseWasRight;
+        private List<QuestionResponseTO> currentSectionResponses;
         private AssesmentContextTO currentContext;
         private AssesmentTO info;
 
@@ -72,9 +75,25 @@ namespace ProfessionalEvaluation.Model
                 return AssesmentAnswerQuestionResult.InvalidResponse;
             }
 
+            responseWasRight = false;
+            if (responseIndex == currentQuestionAnswerIndex)
+            {
+                responseWasRight = true;
+            }
+
+            SaveResponse();
+            UpdateContext();
+
+            return AssesmentAnswerQuestionResult.Successful;
+        }
+
+        private void UpdateContext()
+        {
             if (SectionHasNextQuestion())
             {
                 currentContext.QuestionIndex++;
+
+                UpdateQuestionResponseInfo();
             }
             else
             {
@@ -82,11 +101,21 @@ namespace ProfessionalEvaluation.Model
                 {
                     currentContext.SectionIndex++;
                     currentContext.QuestionIndex = 1;
+
+                    UpdateSectionResponseInfo();
                 }
             }
             AssesmentPersistence.UpdateContext(id, currentContext);
+        }
 
-            return AssesmentAnswerQuestionResult.Successful;
+        private void SaveResponse()
+        {
+            //AssesmentPersistence.SaveResponse(id, currentContext.SectionIndex, responseWasRight);
+        }
+
+        public bool ResponseWasRight()
+        {
+            return responseWasRight;
         }
 
         private bool SectionHasNextQuestion()
@@ -140,10 +169,36 @@ namespace ProfessionalEvaluation.Model
                 {
                     currentContext = AssesmentPersistence.GetContextByAssesmentID(id);
                 }
-            }            
 
+                UpdateSectionResponseInfo();
+            }
+        }
+
+        private void UpdateSectionResponseInfo()
+        {
+            SetCurrentSectionQuestions();
+            UpdateQuestionResponseInfo();
+        }
+
+        private void SetCurrentSectionQuestions()
+        {
             Section section = new Section();
             currentContext.CurrentSectionQuestions = section.GetQuestionsBySection(info.Evaluation.Sections[currentContext.SectionIndex - 1]);
+        }
+
+        private void UpdateQuestionResponseInfo()
+        {
+            currentSectionResponses = new Section().GetResponsesBySection(info.Evaluation.Sections[currentContext.SectionIndex - 1]);
+            int currentQuestionAnswerID = currentSectionResponses.Find( x => x.QuestionID == currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1].ID).AnswerID;
+
+            currentQuestionAnswerIndex = 0;
+            for (int i = 0; i < currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1].Answers.Count; i++)
+            {
+                if (currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1].Answers[i].ID == currentQuestionAnswerID)
+                {
+                    currentQuestionAnswerIndex = i+1;
+                }
+            }
         }
 
         private AssesmentContextTO GetDefaultContext()

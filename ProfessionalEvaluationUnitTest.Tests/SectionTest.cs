@@ -50,5 +50,41 @@ namespace ProfessionalEvaluationUnitTest.Tests
             List<QuestionTO> list = s.GetQuestionsBySection(to);
             Assert.AreEqual(true, list[0].ID > 0);
         }
+
+        [TestMethod]
+        public void GetSectionResponses_SectionsHasResponses_ReturnHasRows()
+        {
+            Section section = new Section();
+            SectionTO to = new SectionTO();
+            to.ID = DEFAULT_ID;
+            to.Type = "Internal";
+
+            List<QuestionResponseTO> responses = section.GetResponsesBySection(to);
+            Assert.IsTrue(responses.Count > 0);
+        }
+
+        [TestMethod]
+        public void GetSectionResponses_SectionsHasResponses_ReturnQuestionID()
+        {
+            Section section = new Section();
+            SectionTO to = new SectionTO();
+            to.ID = DEFAULT_ID;
+            to.Type = "Internal";
+
+            List<QuestionResponseTO> responses = section.GetResponsesBySection(to);
+            Assert.IsTrue(responses[0].QuestionID > 0);
+        }
+
+        [TestMethod]
+        public void GetSectionResponses_SectionsHasResponses_ReturnAnswerID()
+        {
+            Section section = new Section();
+            SectionTO to = new SectionTO();
+            to.ID = DEFAULT_ID;
+            to.Type = "Internal";
+
+            List<QuestionResponseTO> responses = section.GetResponsesBySection(to);
+            Assert.IsTrue(responses[0].AnswerID > 0);
+        }
     }
 }

@@ -11,7 +11,7 @@
 <!-- Page Content -->
 <div class="container">
 
-    <div class="row">
+    <div class="row" style="min-height: 400px;">
 
         <div class="col-md-3">
             <p class="lead">
@@ -38,7 +38,23 @@
 
             </header>
 
-            <h3 id="questionText" class=""></h3>
+            <div class="">
+
+                <h4 id="questionText"></h4>
+
+            </div>
+
+            <div id="questions" class="panel">
+               
+            </div>
+
+            <div class="row">
+                    <div class="col-md-9">
+                    </div>
+                    <div class="col-md-3">
+                        <input id="btnContinue" type="button" class="btn btn-primary" value="Continuar" /> 
+                    </div>
+                </div>
 
         </div>
 
@@ -52,7 +68,13 @@
     <script>
 
         var sectionTemplate = '<a id="section_id_num" href="#" class="list-group-item">_section_name</a>';
+        var questionTemplate = '<div class="radio">' +
+                  '<label><input id="rbtn_index_id" type="radio" value="_value" name="answerRadio">_question_text</label>' +
+                '</div>';
+
+        var sectionLeftTime = 60;
         var controllerName = "Assesment";
+        var timeoutInterval;
 
         function showSectionData(data) {
 
@@ -70,10 +92,32 @@
                         totalDuration = totalDuration + data[i].EstimatedDuration;
                     }
                 }
-
-                //$("#duration").css("visibility", "visible");
-                //$("#duration").html("Duración: " + totalDuration + " horas");
             }
+        }
+
+        function getLetter(index) {
+            return String.fromCharCode(65 + index);
+        }
+
+        function checkLeftTime() {
+
+            $("#minutesLeft").html(sectionLeftTime);
+            if (timeoutInterval) {
+                clearInterval(timeoutInterval);
+            }
+
+            timeoutInterval = setInterval(function () {
+                sectionLeftTime--;
+
+                if (sectionLeftTime == 0) {
+                    alert("Time run out");
+                    clearInterval(timeoutInterval);
+                    return;
+                }
+
+                $("#minutesLeft").html(sectionLeftTime);
+
+            }, 5000);
         }
 
         function getContextInfo() {
@@ -82,13 +126,32 @@
                 console.log(data);
 
                 if (success) {
-                    if (data && data.CurrentSectionQuestions) {
+
+                    $("#questions").empty();
+
+                    if (data && data.CurrentSectionQuestions && data.CurrentSectionQuestions[data.QuestionIndex - 1].Answers) {
+
+                        sectionLeftTime = data.MinutesLeft;
+                        sectionIndex = data.SectionIndex;
+
                         $("#questionText").html(data.QuestionIndex + ". " + data.CurrentSectionQuestions[data.QuestionIndex - 1].Text);
                         $("#questionIndex").html(data.QuestionIndex);
-                        $("#totalQuestions").html(data.CurrentSectionQuestions.length);
-                        $("#minutesLeft").html(data.MinutesLeft);
-                        $("#section_id" + data.SectionIndex).addClass("active");
+                        $("#totalQuestions").html(data.CurrentSectionQuestions.length);                        
+                        $("#section_id" + sectionIndex).addClass("active");
+
+                        for (var i = 0; i < data.CurrentSectionQuestions[data.QuestionIndex - 1].Answers.length; i++) {
+
+                            var questionText = questionTemplate.replace("index_id", i + 1).
+                            replace("_value", i+1).
+                            replace("_question_text", getLetter(i) + ". " + data.CurrentSectionQuestions[data.QuestionIndex - 1].Answers[i].Text);
+
+                            $("#questions").append(questionText);
+                        }
+
+                        checkLeftTime();
                     }
+
+                    
                 }
             });
         }
@@ -124,10 +187,37 @@
 
         }
 
+        function answerQuestion(index) {
+            
+            ajaxPost(controllerName, "AnswerQuestion", { responseIndex: index }, function (success, data) {
+
+                console.log(data);
+
+                if (success) {
+                    if (data) {
+                        if (data.result.toLowerCase() == "successful") {
+                            getContextInfo();
+                        } else {
+                            showMessage("Se ha presentado un error contestando la pregunta", "error");
+                        }
+                    }
+                }
+            });
+
+            //location.href = "/" + controllerName + "/Execution";
+        }
+
         $(document).ready(function () {
 
             $("#btnContinue").on("click", function () {
-                location.href = "/" + controllerName + "/Execution";
+
+                var selected = $("#questions input[type='radio']:checked");
+                if (selected.length > 0) {
+                    $("#section_id" + sectionIndex).removeClass("active");
+                    answerQuestion(selected.val());
+                } else {
+                    showMessage("Por favor selecciona una opción", "warning");
+                }
             });
 
         });

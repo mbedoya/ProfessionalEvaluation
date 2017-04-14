@@ -11,9 +11,12 @@ namespace ProfessionalEvaluation.Model.SectionData
     {
         public List<QuestionTO> GetQuestionsByID(int id)
         {
-            List<QuestionTO> list = QuestionPersistence.GetBySectionID(id);
+            return QuestionPersistence.GetBySectionID(id);
+        }
 
-            return list;
+        public List<QuestionResponseTO> GetQuestionsResponsesByID(int id)
+        {
+            return QuestionPersistence.GetQuestionsResponsesBySectionID(id);
         }
     }
 }

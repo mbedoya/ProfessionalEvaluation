@@ -9,5 +9,6 @@ namespace ProfessionalEvaluation.Model.SectionData
     public interface SectionDataProvider
     {
         List<QuestionTO> GetQuestionsByID(int id);
+        List<QuestionResponseTO> GetQuestionsResponsesByID(int id);
     }
 }
