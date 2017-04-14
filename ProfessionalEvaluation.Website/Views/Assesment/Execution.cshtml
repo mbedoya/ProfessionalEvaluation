@@ -198,7 +198,7 @@
 
         }
 
-        function answerQuestion(index) {
+        function answerQuestion(index, testDoneAfterThisAnswer) {
             
             ajaxPost(controllerName, "AnswerQuestion", { responseIndex: index }, function (success, data) {
 
@@ -207,7 +207,15 @@
                 if (success) {
                     if (data) {
                         if (data.result.toLowerCase() == "successful") {
-                            getContextInfo();
+
+                            if (testDoneAfterThisAnswer) {
+                                setTimeout(function () {
+                                    location.href = "/" + controllerName + "/Done";
+                                }, 1000);
+
+                            } else {
+                                getContextInfo();
+                            }
                         } else {
                             showMessage("Se ha presentado un error contestando la pregunta", "error");
                         }
@@ -226,11 +234,7 @@
 
                     if (sections.length == currentContext.SectionIndex && currentContext.CurrentSectionQuestions.length == currentContext.QuestionIndex) {
                         showMessage("Has terminado la prueba", "information");
-                        answerQuestion(selected.val());
-
-                        setTimeout(function () {
-                            location.href = "/" + controllerName + "/Done";
-                        }, 3000);
+                        answerQuestion(selected.val(), true);
 
                         return;
 

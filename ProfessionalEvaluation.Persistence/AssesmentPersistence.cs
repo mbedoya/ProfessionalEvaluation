@@ -1,4 +1,5 @@
 ﻿using ProfessionalEvaluation.TO;
+using ProfessionalEvaluation.TO.AssesmentResults;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -48,6 +49,36 @@ namespace ProfessionalEvaluation.Persistence
             ExecuteCommand(execCommand);
         }
 
+        public static List<SectionPointsTO> GetAssesmentPoints(int assesmentID){
+
+            List<SectionPointsTO> list = new List<SectionPointsTO>();
+
+            string execCommand = string.Format("SELECT s.ID, SUM(Points) as Points " +
+                " FROM question q " +
+                " JOIN assesment_response ar on q.id = ar.questionid " +
+                " JOIN section s on  s.id=q.SectionID " +
+                " WHERE ar.assesmentid = {0} and ar.answerisright = 1 " +
+                " GROUP by s.ID", assesmentID);
+
+            DataTable table = ExecuteCommand(execCommand);
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow item in table.Rows)
+	            {
+                    SectionPointsTO points = new SectionPointsTO();
+                    points.SectionID = Convert.ToInt32(item["ID"]);
+                    points.Points = Convert.ToInt32(item["Points"]);
+
+                    list.Add(points);
+	            }                
+            }
+
+            return list;
+        }
+
+        
+
         public static AssesmentTO GetByID(int id)
         {
             AssesmentTO element = null;
@@ -75,6 +106,13 @@ namespace ProfessionalEvaluation.Persistence
                 " SET SectionIndex={1}, QuestionIndex={2}, MinutesLeft={3} " +
                 " WHERE AssesmentID = {0}", assesmentID, context.SectionIndex, context.QuestionIndex, context.MinutesLeft);
             ExecuteAssementExecutionCommand(execCommand);
+        }
+
+        public static void SaveResponse(int assesmentID, int questionID, int answerID, bool answerIsRight)
+        {
+            string execCommand = String.Format("INSERT INTO assesment_response (AssesmentID, QuestionID, AnswerID, AnswerIsRight) " +
+                " VALUES ({0},{1},{2},{3})", assesmentID, questionID, answerID, answerIsRight);
+            ExecuteCommand(execCommand);
         }
 
         public static AssesmentContextTO GetContextByAssesmentID(int id)

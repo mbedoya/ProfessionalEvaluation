@@ -1,9 +1,12 @@
 ﻿using ProfessionalEvaluation.Persistence;
 using ProfessionalEvaluation.TO;
+using ProfessionalEvaluation.TO.AssesmentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using ProfessionalEvaluation.Utilities;
 
 namespace ProfessionalEvaluation.Model
 {
@@ -75,6 +78,11 @@ namespace ProfessionalEvaluation.Model
                 return AssesmentAnswerQuestionResult.InvalidResponse;
             }
 
+            if (responseIndex > GetCurrentQuestion().Answers.Count)
+            {
+                return AssesmentAnswerQuestionResult.InvalidResponse;
+            }
+
             UpdateResponseStatus(responseIndex);
             SaveResponse();
             CheckAndEndAssesment();
@@ -83,13 +91,14 @@ namespace ProfessionalEvaluation.Model
             return AssesmentAnswerQuestionResult.Successful;
         }
 
+        private QuestionTO GetCurrentQuestion()
+        {
+            return currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1];
+        }
+
         private void UpdateResponseStatus(int responseIndex)
         {
-            responseWasRight = false;
-            if (responseIndex == currentQuestionAnswerIndex)
-            {
-                responseWasRight = true;
-            }
+            responseWasRight = responseIndex == currentQuestionAnswerIndex;
         }
 
         private void CheckAndEndAssesment()
@@ -124,7 +133,8 @@ namespace ProfessionalEvaluation.Model
 
         private void SaveResponse()
         {
-            //AssesmentPersistence.SaveResponse(id, currentContext.SectionIndex, responseWasRight);
+            QuestionTO question = GetCurrentQuestion();
+            AssesmentPersistence.SaveResponse(id, question.ID, question.Answers[currentQuestionAnswerIndex - 1].ID, responseWasRight);
         }
 
         public bool ResponseWasRight()
@@ -207,8 +217,31 @@ namespace ProfessionalEvaluation.Model
             info.Status = AssesmentStatus.Done;
             info.DateFinished= DateTime.Now;
             AssesmentPersistence.SetFinishedDate(id);
+            GenerateAndSendResults();
 
             return AssesmentEndOperationState.Successful;
+        }
+
+        private void GenerateAndSendResults()
+        {
+            AssesmentReportTO report = new AssesmentReportTO();
+            report.Sections = new List<SectionReportTO>();
+
+            List<SectionPointsTO> list = AssesmentPersistence.GetAssesmentPoints(id);
+            for (int i = 0; i < info.Evaluation.Sections.Count; i++)
+            {
+                SectionReportTO section = new SectionReportTO();
+                section.Name = info.Evaluation.Sections[i].Name;
+                SectionPointsTO points = list.Find(x => x.SectionID == info.Evaluation.Sections[i].ID);
+                if (points != null)
+                {
+                    section.Percentage = (points.Points/100)*100;
+                }
+
+                report.Sections.Add(section);
+            }
+
+            Pdf.GenerateSimplePdf(report);
         }
 
         private void UpdateSectionResponseInfo()
@@ -229,11 +262,14 @@ namespace ProfessionalEvaluation.Model
             int currentQuestionAnswerID = currentSectionResponses.Find( x => x.QuestionID == currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1].ID).AnswerID;
 
             currentQuestionAnswerIndex = 0;
-            for (int i = 0; i < currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1].Answers.Count; i++)
+            QuestionTO question = GetCurrentQuestion();
+
+            for (int i = 0; i < question.Answers.Count; i++)
             {
-                if (currentContext.CurrentSectionQuestions[currentContext.QuestionIndex - 1].Answers[i].ID == currentQuestionAnswerID)
+                if (question.Answers[i].ID == currentQuestionAnswerID)
                 {
                     currentQuestionAnswerIndex = i+1;
+                    break;
                 }
             }
         }
