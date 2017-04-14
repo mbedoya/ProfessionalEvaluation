@@ -202,6 +202,15 @@ namespace ProfessionalEvaluationUnitTest.Tests
         }
 
         [TestMethod]
+        public void UpdateLeftTime_TimeRunOut_MinutesLeftStillZero()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            a.UpdateLeftTime();
+            AssesmentContextTO context = a.GetCurrentContext();
+            Assert.AreEqual(true, context.MinutesLeft > 0);
+        }
+
+        [TestMethod]
         public void Start_AssesmentNotFound_NotFoundResult()
         {
             Assesment a = new Assesment(0);

@@ -35,7 +35,7 @@
             <!-- Header -->
             <header>
                 <p id="title"></p>
-
+                <p id="sectionName"></p>
             </header>
 
             <div class="">
@@ -75,6 +75,9 @@
         var sectionLeftTime = 60;
         var controllerName = "Assesment";
         var timeoutInterval;
+        var currentContext;
+        var sections;
+        var sectionName;
 
         function showSectionData(data) {
 
@@ -108,6 +111,9 @@
 
             timeoutInterval = setInterval(function () {
                 sectionLeftTime--;
+                ajaxPost(controllerName, "UpdateLeftTime", {}, function () {
+
+                });
 
                 if (sectionLeftTime == 0) {
                     alert("Time run out");
@@ -131,13 +137,17 @@
 
                     if (data && data.CurrentSectionQuestions && data.CurrentSectionQuestions[data.QuestionIndex - 1].Answers) {
 
+                        currentContext = data;
                         sectionLeftTime = data.MinutesLeft;
                         sectionIndex = data.SectionIndex;
+                        sectioName = sections[currentContext.SectionIndex - 1].Name;
 
                         $("#questionText").html(data.QuestionIndex + ". " + data.CurrentSectionQuestions[data.QuestionIndex - 1].Text);
                         $("#questionIndex").html(data.QuestionIndex);
-                        $("#totalQuestions").html(data.CurrentSectionQuestions.length);                        
+                        $("#totalQuestions").html(data.CurrentSectionQuestions.length);
+
                         $("#section_id" + sectionIndex).addClass("active");
+                        $("#sectionName").html(sectioName);
 
                         for (var i = 0; i < data.CurrentSectionQuestions[data.QuestionIndex - 1].Answers.length; i++) {
 
@@ -180,6 +190,7 @@
                 $("#company_name").html(data.Company.Name);
                 $("#btnContinue").css("visibility", "visible");
 
+                sections = data.Evaluation.Sections;
                 showSectionData(data.Evaluation.Sections);
 
                 getContextInfo();
@@ -203,8 +214,6 @@
                     }
                 }
             });
-
-            //location.href = "/" + controllerName + "/Execution";
         }
 
         $(document).ready(function () {
@@ -214,6 +223,23 @@
                 var selected = $("#questions input[type='radio']:checked");
                 if (selected.length > 0) {
                     $("#section_id" + sectionIndex).removeClass("active");
+
+                    if (sections.length == currentContext.SectionIndex && currentContext.CurrentSectionQuestions.length == currentContext.QuestionIndex) {
+                        showMessage("Has terminado la prueba", "information");
+                        answerQuestion(selected.val());
+
+                        setTimeout(function () {
+                            location.href = "/" + controllerName + "/Done";
+                        }, 2000);
+
+                        return;
+
+                    } else {
+                        if (currentContext.CurrentSectionQuestions.length == currentContext.QuestionIndex) {
+                            showMessage("Has terminado la sección " + sections[currentContext.SectionIndex - 1].Name, "information");
+                        }
+                    }
+
                     answerQuestion(selected.val());
                 } else {
                     showMessage("Por favor selecciona una opción", "warning");

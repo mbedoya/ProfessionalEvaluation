@@ -131,6 +131,10 @@ namespace ProfessionalEvaluation.Model
         public void UpdateLeftTime()
         {
             currentContext.MinutesLeft = currentContext.MinutesLeft - 1;
+            if (currentContext.MinutesLeft < 0)
+            {
+                currentContext.MinutesLeft = 0;
+            }
             AssesmentPersistence.UpdateContext(id, currentContext);
         }
 
