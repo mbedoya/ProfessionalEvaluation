@@ -36,6 +36,16 @@ namespace ProfessionalEvaluation.Website.Controllers
 
         public ActionResult Execution()
         {
+            return CheckAndRoute();
+        }
+
+        public ActionResult AlreadyDone()
+        {
+            return CheckAndRoute();
+        }
+
+        public ActionResult Done()
+        {
             return View();
         }
 
@@ -109,10 +119,17 @@ namespace ProfessionalEvaluation.Website.Controllers
 
             if (assesment != null)
             {
-                if (assesment.GetInfo().AlreadyStarted)
+                if (assesment.GetInfo().Status == AssesmentStatus.Done)
                 {
-                    return View("Execution");
+                    return View("AlreadyDone");
                 }
+                else
+                {
+                    if (assesment.GetInfo().Status == AssesmentStatus.Started)
+                    {
+                        return View("Execution");
+                    }
+                }                
             }
 
             return View();

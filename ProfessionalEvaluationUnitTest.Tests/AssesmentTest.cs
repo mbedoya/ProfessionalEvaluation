@@ -236,6 +236,52 @@ namespace ProfessionalEvaluationUnitTest.Tests
         }
 
         [TestMethod]
+        public void End_AssesmentStartedAndFinishesSuccessfully_SuccessfulResult()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            if (a.GetInfo().Status == AssesmentStatus.Started)
+            {
+                a.End();
+                Assert.AreEqual(AssesmentStatus.Done, a.GetInfo().Status);
+            }
+            else
+            {
+                Assert.IsTrue(true);
+            }
+            
+        }
+
+        [TestMethod]
+        public void End_AssesmentNotStartedStatusRemains_StatusDoesNotChange()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            if (a.GetInfo().Status == AssesmentStatus.Created)
+            {
+                a.End();
+                Assert.AreEqual(AssesmentStatus.Created, a.GetInfo().Status);
+            }
+            else
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [TestMethod]
+        public void End_AssesmentDoneStatusRemains_StatusDoesNotChange()
+        {
+            Assesment a = new Assesment(DEFAULT_ID);
+            if (a.GetInfo().Status == AssesmentStatus.Done)
+            {
+                a.End();
+                Assert.AreEqual(AssesmentStatus.Done, a.GetInfo().Status);
+            }
+            else
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [TestMethod]
         public void GetContext_ByAssesmentIdJustStarted_InitialDataSectionIs1()
         {
             Assesment a = new Assesment(DEFAULT_ASSESMENT_ID);

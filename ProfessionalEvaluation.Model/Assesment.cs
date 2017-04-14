@@ -75,16 +75,30 @@ namespace ProfessionalEvaluation.Model
                 return AssesmentAnswerQuestionResult.InvalidResponse;
             }
 
+            UpdateResponseStatus(responseIndex);
+            SaveResponse();
+            CheckAndEndAssesment();
+            UpdateContext();
+
+            return AssesmentAnswerQuestionResult.Successful;
+        }
+
+        private void UpdateResponseStatus(int responseIndex)
+        {
             responseWasRight = false;
             if (responseIndex == currentQuestionAnswerIndex)
             {
                 responseWasRight = true;
             }
+        }
 
-            SaveResponse();
-            UpdateContext();
-
-            return AssesmentAnswerQuestionResult.Successful;
+        private void CheckAndEndAssesment()
+        {
+            if (info.Evaluation.Sections.Count == currentContext.SectionIndex &&
+                currentContext.CurrentSectionQuestions.Count == currentContext.QuestionIndex)
+            {
+                End();
+            }
         }
 
         private void UpdateContext()
@@ -151,7 +165,7 @@ namespace ProfessionalEvaluation.Model
             }
 
             info.DateStarted = DateTime.Now;
-            info.AlreadyStarted = true;
+            info.Status = AssesmentStatus.Started;
             AssesmentPersistence.SetStartDate(id);
             CreateContext();
 
@@ -162,7 +176,7 @@ namespace ProfessionalEvaluation.Model
         {
             if (info != null )
             {
-                if (!info.AlreadyStarted)
+                if (info.Status == AssesmentStatus.Created)
                 {
                     currentContext = GetDefaultContext();
                     currentContext.MinutesLeft = ConvertEstimatedDurationToMinutesLeft(info.Evaluation.Sections[0].EstimatedDuration);
@@ -176,6 +190,25 @@ namespace ProfessionalEvaluation.Model
 
                 UpdateSectionResponseInfo();
             }
+        }
+
+        public AssesmentEndOperationState End()
+        {
+            if (info.Status == AssesmentStatus.Created)
+            {
+                return AssesmentEndOperationState.AssementNotStarted;
+            }
+
+            if (info.Status == AssesmentStatus.Done)
+            {
+                return AssesmentEndOperationState.AlreadyDone;
+            }
+
+            info.Status = AssesmentStatus.Done;
+            info.DateFinished= DateTime.Now;
+            AssesmentPersistence.SetFinishedDate(id);
+
+            return AssesmentEndOperationState.Successful;
         }
 
         private void UpdateSectionResponseInfo()

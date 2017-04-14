@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/Views/Shared/_AssesmentLayout.cshtml";
+}
+
+@section css{
+
+    <!-- Custom CSS -->
+    <link href='@Url.Content("~/css/heroic-features.css")' rel="stylesheet">
+}
+
+<!-- Header -->
+<header class="jumbotron hero-spacer">
+    <img id="company_logo" src="" style="visibility: hidden" />
+    <p>Has finalizado la prueba <i><span id="title"></span></i>.</p> 
+    Ya tenemos tus resultados, <br />
+    Te agradecemos por tu tiempo.
+</header>
+
+<hr>
+
+@section scripts{
+
+    <script>
+        //Data Retrieved Event - Session Data
+        function handleAssementDataRetrieved(e) {
+
+            var data = e.detail.data;
+            var success = e.detail.success;
+
+            console.log(data);
+
+            if (success) {
+
+                if (data && data.Evaluation) {
+
+                    $("#company_name").html(data.Company.Name);
+                  
+                }
+            }
+        }
+    </script>
+}

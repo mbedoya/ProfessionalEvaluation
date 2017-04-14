@@ -10,7 +10,7 @@ namespace ProfessionalEvaluation.Persistence
     public class AssesmentPersistence : Persistence
     {
         private static string command = 
-                "SELECT a.ID, a.AssesmentID, a.DateStarted, c.Name, c.LogoPath, e.ID as EvalID, e.Name as EvalName, e.Description as EvalDescription " +
+                "SELECT a.ID, a.AssesmentID, a.DateStarted, a.DateFinished, c.Name, c.LogoPath, e.ID as EvalID, e.Name as EvalName, e.Description as EvalDescription " +
                 " FROM assesment a " +
                 " JOIN company c ON a.CompanyID = c.ID" +
                 " JOIN evaluation e ON a.EvaluationID = e.ID" +
@@ -32,13 +32,19 @@ namespace ProfessionalEvaluation.Persistence
 
         public static void Restart(int id)
         {
-            string execCommand = String.Format("UPDATE assesment SET DateStarted = NULL WHERE ID = {0}", id);
+            string execCommand = String.Format("UPDATE assesment SET DateStarted = NULL,DateFinished=NULL WHERE ID = {0}", id);
             ExecuteCommand(execCommand);
         }
 
         public static void SetStartDate(int id)
         {
             string execCommand = String.Format("UPDATE assesment SET DateStarted = CURRENT_TIMESTAMP WHERE ID = {0}", id);
+            ExecuteCommand(execCommand);
+        }
+
+        public static void SetFinishedDate(int id)
+        {
+            string execCommand = String.Format("UPDATE assesment SET DateFinished = CURRENT_TIMESTAMP WHERE ID = {0}", id);
             ExecuteCommand(execCommand);
         }
 
@@ -98,11 +104,17 @@ namespace ProfessionalEvaluation.Persistence
 
             element = new AssesmentTO();
             element.ID = Convert.ToInt32(table.Rows[0]["ID"]);
-            element.AlreadyStarted = false;
+            element.Status = AssesmentStatus.Created;
             if (!(table.Rows[0]["DateStarted"] is DBNull))
             {
                 element.DateStarted = Convert.ToDateTime(table.Rows[0]["DateStarted"]);
-                element.AlreadyStarted = true;
+                element.Status = AssesmentStatus.Started;
+            }
+
+            if (!(table.Rows[0]["DateFinished"] is DBNull))
+            {
+                element.DateFinished = Convert.ToDateTime(table.Rows[0]["DateFinished"]);
+                element.Status = AssesmentStatus.Done;
             }
 
             element.Company = new CompanyTO();

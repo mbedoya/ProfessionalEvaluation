@@ -11,7 +11,8 @@ namespace ProfessionalEvaluation.TO
         public EvaluationTO Evaluation { get; set; }
         public int ID { get; set; }
         public DateTime? DateStarted { get; set; }
-        public bool AlreadyStarted { get; set; }
+        public DateTime? DateFinished { get; set; }
+        public AssesmentStatus Status { get; set; }
     }
 
     public enum AssesmentStartOperationState
@@ -25,5 +26,19 @@ namespace ProfessionalEvaluation.TO
     {
         Successful,
         InvalidResponse
+    }
+
+    public enum AssesmentStatus
+    {
+        Created,
+        Started,
+        Done
+    }
+
+    public enum AssesmentEndOperationState
+    {
+        AssementNotStarted,
+        AlreadyDone,
+        Successful
     }
 }
