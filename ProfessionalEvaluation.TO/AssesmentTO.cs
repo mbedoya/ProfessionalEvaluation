@@ -13,6 +13,7 @@ namespace ProfessionalEvaluation.TO
         public DateTime? DateStarted { get; set; }
         public DateTime? DateFinished { get; set; }
         public AssesmentStatus Status { get; set; }
+        public string PersonName { get; set; }
     }
 
     public enum AssesmentStartOperationState

@@ -56,6 +56,7 @@
     <Compile Include="AssesmentTest.cs" />
     <Compile Include="EvaluationTest.cs" />
     <Compile Include="IndustryTest.cs" />
+    <Compile Include="PdfTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SectionTest.cs" />
   </ItemGroup>
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\ProfessionalEvaluation.TO\ProfessionalEvaluation.TO.csproj">
       <Project>{8d8861e7-826e-45fe-93a0-4995b5708036}</Project>
       <Name>ProfessionalEvaluation.TO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProfessionalEvaluation.Utilities\ProfessionalEvaluation.Utilities.csproj">
+      <Project>{1d177c5f-08e9-4204-a6c0-5db7edb5de20}</Project>
+      <Name>ProfessionalEvaluation.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

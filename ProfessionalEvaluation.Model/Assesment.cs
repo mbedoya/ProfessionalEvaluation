@@ -225,6 +225,7 @@ namespace ProfessionalEvaluation.Model
         private void GenerateAndSendResults()
         {
             AssesmentReportTO report = new AssesmentReportTO();
+            report.AssesmentInfo = info;
             report.Sections = new List<SectionReportTO>();
 
             List<SectionPointsTO> list = AssesmentPersistence.GetAssesmentPoints(id);
@@ -232,10 +233,11 @@ namespace ProfessionalEvaluation.Model
             {
                 SectionReportTO section = new SectionReportTO();
                 section.Name = info.Evaluation.Sections[i].Name;
-                SectionPointsTO points = list.Find(x => x.SectionID == info.Evaluation.Sections[i].ID);
-                if (points != null)
+                section.Percentage = 0;
+                SectionPointsTO sectionPoints = list.Find(x => x.SectionID == info.Evaluation.Sections[i].ID);
+                if (sectionPoints != null)
                 {
-                    section.Percentage = (points.Points/100)*100;
+                    section.Percentage = sectionPoints.Points;
                 }
 
                 report.Sections.Add(section);

@@ -7,6 +7,7 @@ namespace ProfessionalEvaluation.TO.AssesmentResults
 {
     public class AssesmentReportTO
     {
+        public AssesmentTO AssesmentInfo { get; set; }
         public List<SectionReportTO> Sections { get; set; }
     }
 }
