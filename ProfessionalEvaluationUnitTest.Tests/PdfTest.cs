@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProfessionalEvaluation.Utilities;
 using ProfessionalEvaluation.TO.AssesmentResults;
 using ProfessionalEvaluation.TO;
+using ProfessionalEvaluation.TO.AssesmentAnalysis;
 
 namespace ProfessionalEvaluationUnitTest.Tests
 {
@@ -19,6 +20,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
             AssesmentReportTO report = new AssesmentReportTO();
             report.Sections = GetReportSections();
             report.AssesmentInfo = GetAssesmentInfo();
+            report.Analysis = GetAnalysis();
 
             Pdf.GenerateSimplePdf(report);
             Assert.IsTrue(true);
@@ -29,6 +31,8 @@ namespace ProfessionalEvaluationUnitTest.Tests
             List<SectionReportTO> list = new List<SectionReportTO>();
             list.Add(new SectionReportTO() { Name = "Capacidad de análisis", Percentage = 50 });
             list.Add(new SectionReportTO() { Name = "Lógica de Programación", Percentage = 75 });
+            list.Add(new SectionReportTO() { Name = "Ejecución de pruebas", Percentage = 100 });
+            list.Add(new SectionReportTO() { Name = "Inglés", Percentage = 30 });
 
             return list;
         }
@@ -47,6 +51,20 @@ namespace ProfessionalEvaluationUnitTest.Tests
             info.DateFinished = DateTime.Now;
 
             return info;
+        }
+
+        private AssesmentAnalysisReportTO GetAnalysis()
+        {
+            AssesmentAnalysisReportTO analysis = new AssesmentAnalysisReportTO();
+            analysis.RoleResult = new AssesmentRoleResultTO() { Title = "DESARROLLADOR JUNIOR", Points = 100, PossiblePoints = 200 };
+
+            List<AssesmentRoleLevelTO> levels = new List<AssesmentRoleLevelTO>();
+            levels.Add(new AssesmentRoleLevelTO() { Name = "JUNIOR", Description = "No debería ejecutar proyectos sin ayuda de expertos, no cuenta con el conocimiento ni experiencia necesarios para implementar soluciones complejas." });
+            levels.Add(new AssesmentRoleLevelTO() { Name = "MIDDLE", Description = "Puede ejecutar proyectos sin ayuda de expertos" });
+            levels.Add(new AssesmentRoleLevelTO() { Name = "SENIOR", Description = "Puede ejecutar proyectos solo, cuenta con el conocimiento suficiente." });
+            analysis.RoleLevels = levels;
+
+            return analysis;
         }
     }
 }
