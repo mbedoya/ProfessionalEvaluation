@@ -122,13 +122,19 @@ namespace ProfessionalEvaluation.Model
             {
                 if (EvaluationHasNextSection())
                 {
-                    currentContext.SectionIndex++;
-                    currentContext.QuestionIndex = 1;
-
-                    UpdateSectionResponseInfo();
+                    MoveToNextSection();                    
                 }
             }
             AssesmentPersistence.UpdateContext(id, currentContext);
+        }
+
+        private void MoveToNextSection()
+        {
+            currentContext.SectionIndex++;
+            currentContext.QuestionIndex = 1;
+            currentContext.MinutesLeft = ConvertEstimatedDurationToMinutesLeft(info.Evaluation.Sections[currentContext.SectionIndex - 1].EstimatedDuration);
+
+            UpdateSectionResponseInfo();
         }
 
         private void SaveResponse()
@@ -154,11 +160,29 @@ namespace ProfessionalEvaluation.Model
 
         public void UpdateLeftTime()
         {
+            if (info.Status != AssesmentStatus.Started)
+            {
+                return;
+            }
+
             currentContext.MinutesLeft = currentContext.MinutesLeft - 1;
             if (currentContext.MinutesLeft < 0)
             {
                 currentContext.MinutesLeft = 0;
             }
+
+            if (currentContext.MinutesLeft == 0)
+            {
+                if (EvaluationHasNextSection())
+                {
+                    MoveToNextSection();
+                }
+                else
+                {
+                    End();
+                }                
+            }
+
             AssesmentPersistence.UpdateContext(id, currentContext);
         }
 
@@ -278,7 +302,7 @@ namespace ProfessionalEvaluation.Model
 
         private AssesmentContextTO GetDefaultContext()
         {
-            return new AssesmentContextTO() { QuestionIndex = 1, SectionIndex = 1, MinutesLeft = 60 };
+            return new AssesmentContextTO() { QuestionIndex = 1, SectionIndex = 1 };
         }
 
         private int ConvertEstimatedDurationToMinutesLeft(double estimatedDuration)

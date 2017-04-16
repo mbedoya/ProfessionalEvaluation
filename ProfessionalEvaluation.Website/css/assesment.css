@@ -8,3 +8,11 @@ h2{
 	font-weight: bold;
 	font-size: 25px;
 }
+
+.modal-header , .modal-body{
+    border-bottom: 0px;
+}
+
+.modal-body{
+    font-size: 15px;
+}

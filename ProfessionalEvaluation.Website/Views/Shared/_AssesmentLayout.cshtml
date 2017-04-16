@@ -14,6 +14,9 @@
     <!-- Bootstrap Core CSS -->
     <link href='@Url.Content("~/css/bootstrap.min.css")' rel="stylesheet">
 
+    <!-- Custom Fonts -->
+    <link href="@Url.Content("~/vendor/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+
     <!-- Assesment CSS -->
     <link href='@Url.Content("~/css/assesment.css")' rel="stylesheet">
 
@@ -70,7 +73,22 @@
     <script>
 
         function showMessage(message, type) {
-            alert(message);
+
+            $("#modal_body").html(message);
+            $("#modal_opener").click();
+
+            //Auto close
+            setTimeout(function () {
+                $("#btn_close_modal").click();
+            }, 4000);
+        }
+
+        function showLoading() {
+            $("#loading_modal_opener").click();
+        }
+
+        function closeLoading() {
+            $("#btn_loading_close_modal").click();
         }
 
         function ajaxPost(controller, method, data, fx) {
@@ -89,11 +107,25 @@
             });
         }
 
+        var showLoadingPopup = true;
+        function checkAndShowLoadingPopup() {
+
+            setInterval(function () {
+                if (showLoadingPopup) {
+                    showLoading();
+                }
+            }, 2000);
+        }
+
         $(document).ready(function () {
 
             function init() {
 
+                checkAndShowLoadingPopup();            
+
                 ajaxPost("Assesment", "GetData", {}, function (success, data) {
+
+                    showLoadingPopup = false;
 
                     var myEvent = new CustomEvent("AssesmentDataRetrieved",
                         {
@@ -104,6 +136,8 @@
                         }
                     );
                     document.body.dispatchEvent(myEvent);
+
+                    closeLoading();
 
                     if (success) {
 
@@ -129,12 +163,12 @@
                         $("#title").html("Lo sentimos, se ha presentado en error");
                     }
 
-                    
+
                 });
             }
 
             init();
-            
+
         });
 
     </script>
@@ -147,6 +181,61 @@
         document.body.addEventListener("AssesmentDataRetrieved", handleAssementDataRetrieved, false);
 
     </script>
+
+    <!-- Trigger the modal with a button -->
+    <button id="modal_opener" type="button" data-toggle="modal" data-target="#myModal" style="visibility: hidden"></button>
+
+    <!-- Modal Message -->
+    <div id="myModal" class="modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btn_close_modal" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 id="modal_title" class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <span class="fa-stack fa-1x">
+                                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                                <i class="fa fa-info fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </div>
+                        <div class="col-md-11">
+                            <div id="modal_body"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Trigger the modal with a button -->
+    <button id="loading_modal_opener" type="button" data-toggle="modal" data-target="#loadingModal" data-keyboard="false" style="visibility: hidden"></button>
+
+    <!-- Modal Message -->
+    <div id="loadingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <button id="btn_loading_close_modal" type="button" class="close" data-dismiss="modal" style="visibility:hidden">&times;</button>
+                <div class="modal-body">
+                    <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle-o-notch fa-spin"></i>
+                        
+                    </span>
+                    Espera un momento...
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 </body>
 

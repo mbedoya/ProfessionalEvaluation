@@ -90,7 +90,7 @@ namespace ProfessionalEvaluation.Utilities
         private static void AddHeader(XGraphics gfx, AssesmentReportTO report, PdfPage page)
         {
             //Client Header
-            XBrush brush = new XSolidBrush(XColor.FromArgb(0, 238, 238, 238));
+            XBrush brush = new XSolidBrush(XColor.FromArgb(0, 188, 188, 188));
             XImage clientImage = XImage.FromFile(@"C:\Temp\" + report.AssesmentInfo.Company.Logo);
             gfx.DrawRectangle(brush, 0, 0, page.Width, 55);
             gfx.DrawImage(clientImage, 2, 2, 210, 50);

@@ -113,20 +113,35 @@
                 sectionLeftTime--;
                 ajaxPost(controllerName, "UpdateLeftTime", {}, function () {
 
-                });
+                    if (sectionLeftTime == 0) {
+                        showMessage("Se te ha acabado el tiempo para la sección, debes continuar con la siguiente.", "warning");
+                        clearInterval(timeoutInterval);
 
-                if (sectionLeftTime == 0) {
-                    alert("Time run out");
-                    clearInterval(timeoutInterval);
-                    return;
-                }
+                        if (evaluationHasNoMoreQuestions()) {
+                            showMessage("Se te ha acabado el tiempo para tu evaluación.", "warning");
+                            setTimeout(function () {
+                                endEvaluation();
+                            }, 3000);
+                            
+                        } else {
+                            getContextInfo();
+                        }
+                        return;
+                    }
+
+                });
 
                 $("#minutesLeft").html(sectionLeftTime);
 
-            }, 5000);
+            }, 60*1000);
         }
 
         function getContextInfo() {
+
+            if (currentContext && currentContext.SectionIndex) {
+                $("#section_id" + currentContext.SectionIndex).removeClass("active");
+            }
+
             ajaxPost(controllerName, "GetContext", {}, function (success, data) {
 
                 console.log(data);
@@ -198,20 +213,27 @@
 
         }
 
+        function endEvaluation() {
+            location.href = "/" + controllerName + "/Done";
+        }
+
         function answerQuestion(index, testDoneAfterThisAnswer) {
+
+            if (testDoneAfterThisAnswer) {
+                showLoading();
+            }
             
             ajaxPost(controllerName, "AnswerQuestion", { responseIndex: index }, function (success, data) {
 
                 console.log(data);
+                closeLoading();
 
                 if (success) {
                     if (data) {
                         if (data.result.toLowerCase() == "successful") {
 
                             if (testDoneAfterThisAnswer) {
-                                setTimeout(function () {
-                                    location.href = "/" + controllerName + "/Done";
-                                }, 1000);
+                                endEvaluation();
 
                             } else {
                                 getContextInfo();
@@ -224,23 +246,26 @@
             });
         }
 
+        function evaluationHasNoMoreQuestions(){
+            return sections.length == currentContext.SectionIndex && currentContext.CurrentSectionQuestions.length == currentContext.QuestionIndex;
+        }
+
         $(document).ready(function () {
 
             $("#btnContinue").on("click", function () {
 
                 var selected = $("#questions input[type='radio']:checked");
                 if (selected.length > 0) {
-                    $("#section_id" + sectionIndex).removeClass("active");
-
-                    if (sections.length == currentContext.SectionIndex && currentContext.CurrentSectionQuestions.length == currentContext.QuestionIndex) {
-                        showMessage("Has terminado la prueba", "information");
+                    
+                    if (evaluationHasNoMoreQuestions()) {
+                        
                         answerQuestion(selected.val(), true);
-
                         return;
 
                     } else {
                         if (currentContext.CurrentSectionQuestions.length == currentContext.QuestionIndex) {
-                            showMessage("Has terminado la sección " + sections[currentContext.SectionIndex - 1].Name, "information");
+                            var message = "Has terminado la sección '" + sections[currentContext.SectionIndex - 1].Name + "' y has iniciado iniciado '" + sections[currentContext.SectionIndex].Name + "'";
+                            showMessage(message, "information");
                         }
                     }
 
