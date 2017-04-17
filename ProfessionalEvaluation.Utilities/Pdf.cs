@@ -8,16 +8,22 @@ using ProfessionalEvaluation.TO.AssesmentResults;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
+using System.Configuration;
+using System.Web;
 
 namespace ProfessionalEvaluation.Utilities
 {
     public class Pdf
     {
-        public static void GenerateSimplePdf(AssesmentReportTO report)
+        private static string fontName = "Baskerville";
+
+        public static string GenerateSimplePdf(AssesmentReportTO report)
         {
+            const string PdfGenerationPathSetting = "PdfGenerationPath";
+
             // Create a new PDF document
             PdfDocument document = new PdfDocument();
-            document.Info.Title = "Created with PDFsharp";
+            document.Info.Title = "Evaluación Laboru Tech";
 
             // Create an empty page
             PdfPage page = document.AddPage();
@@ -30,19 +36,19 @@ namespace ProfessionalEvaluation.Utilities
             AddHeader(gfx, report, page);
             AddAbout(gfx, report);
 
-            XFont regularFont = new XFont("Verdana", 14, XFontStyle.Regular);
+            XFont regularFont = new XFont(fontName, 14, XFontStyle.Regular);
 
             // -------------------Info Section
-            int heightSpace = 80;
+            int heightSpace = 70;
             int leftMargin = 20;
             int subtitleWidth = 150;
             int sectionTextWidth = 180;
 
-            XFont subtitleFont = new XFont("Verdana", 14, XFontStyle.BoldItalic);
+            XFont subtitleFont = new XFont(fontName, 14, XFontStyle.BoldItalic);
 
             // Evaluation Name
-            XFont titleFont = new XFont("Verdana", 15, XFontStyle.BoldItalic);
-            gfx.DrawString(report.AssesmentInfo.Evaluation.Name, titleFont, XBrushes.Black,
+            XFont titleFont = new XFont(fontName, 15, XFontStyle.BoldItalic);
+            gfx.DrawString(report.AssesmentInfo.Evaluation.Name.ToUpper(), titleFont, XBrushes.Black,
               new XRect(0, heightSpace, page.Width, 20),
               XStringFormats.Center);
 
@@ -155,29 +161,65 @@ namespace ProfessionalEvaluation.Utilities
               new XRect(leftMargin, heightSpace, sectionTextWidth, 35),
               XStringFormats.TopLeft);
 
+                XBrush resultBrush = GetBrushByPercentage(item.Percentage);
+
                 //Bar
-                gfx.DrawRectangle(XBrushes.Black, new XRect(leftMargin + sectionTextWidth + 20, heightSpace + 10, itemBarSize, 2));
+                gfx.DrawRectangle(resultBrush, new XRect(leftMargin + sectionTextWidth + 20, heightSpace + 10, itemBarSize, 2));
 
                 //Percentage
-                tf.DrawString(item.Percentage.ToString() + "%", regularFont, XBrushes.Black,
+                tf.DrawString(item.Percentage.ToString() + "%", regularFont, resultBrush,
               new XRect(leftMargin + sectionTextWidth + barSize + 30, heightSpace, 50, 35),
               XStringFormats.TopLeft);
 
                 heightSpace = heightSpace + 30;
             }
 
-            // Save the document...
-            const string filename = @"c:\temp\AssesmentReport.pdf";
-            document.Save(filename);
+            string filePath = String.Format("{0}AssesmentReport_{1}.pdf", ConfigurationManager.AppSettings[PdfGenerationPathSetting], report.AssesmentInfo.ID);
+            document.Save(filePath);
+            document.Close();
+
+            return filePath;
+        }
+
+        private static XBrush GetBrushByPercentage(double p)
+        {
+            XBrush brush = XBrushes.Red;
+            if (p >= 25 && p < 50)
+            {
+                brush = XBrushes.OrangeRed;
+            }
+            else
+            {
+                if (p >= 50 && p < 74)
+                {
+                    brush = XBrushes.Yellow;
+                }
+                else
+                {
+                    if (p >= 75 & p < 95)
+                    {
+                        brush = XBrushes.YellowGreen;
+                    }
+                    else
+                    {
+                        if (p >= 95)
+                        {
+                            brush = XBrushes.Green;
+                        }                        
+                    }
+                }
+            }
+
+            return brush;
         }
 
         private static void AddHeader(XGraphics gfx, AssesmentReportTO report, PdfPage page)
         {
             //Client Header
             XBrush brush = new XSolidBrush(XColor.FromArgb(0, 188, 188, 188));
-            XImage clientImage = XImage.FromFile(@"C:\Temp\" + report.AssesmentInfo.Company.Logo);
-            gfx.DrawRectangle(brush, 0, 0, page.Width, 55);
-            gfx.DrawImage(clientImage, 2, 2, 210, 50);
+            XImage clientImage = XImage.FromFile(HttpContext.Current.Server.MapPath("~/img/" + report.AssesmentInfo.Company.Logo));
+            gfx.DrawRectangle(brush, 0, 50, page.Width, 1);
+            gfx.DrawImage(clientImage, 2, 2, 180, 45);
         }
 
         private static void AddAbout(XGraphics gfx, AssesmentReportTO report)
@@ -185,7 +227,7 @@ namespace ProfessionalEvaluation.Utilities
             XPen separatorsPen = new XPen(XColor.FromArgb(0, 238, 238, 238), 1);
 
             // About font
-            XFont aboutFont = new XFont("Verdana", 9, XFontStyle.Regular);
+            XFont aboutFont = new XFont(fontName, 9, XFontStyle.Regular);
 
             //Logo and Separators
             int imageX = 150;
@@ -195,7 +237,7 @@ namespace ProfessionalEvaluation.Utilities
             int separatorX = imageX + imageWidth + 15;
             int aboutTextX = separatorX + 20;
             int imageY = 750;
-            XImage laboruImage = XImage.FromFile(@"C:\Temp\logo-laboru.png");
+            XImage laboruImage = XImage.FromFile(HttpContext.Current.Server.MapPath("~/img/logo-laboru.png"));
             gfx.DrawImage(laboruImage, imageX, imageY, imageWidth, imageHeight);
             gfx.DrawLine(separatorsPen, separatorX, imageY, separatorX, imageY + imageHeight);
 

@@ -9,6 +9,9 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
     <_PublishTargetUrl>C:\Publicaciones\LaboruTech</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
+    <File Include="bin/de/PdfSharp.resources.dll">
+      <publishTime>04/14/2017 17:27:12</publishTime>
+    </File>
     <File Include="bin/es/System.Net.Http.Formatting.resources.dll">
       <publishTime>04/08/2017 11:47:15</publishTime>
     </File>
@@ -54,17 +57,23 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
     <File Include="bin/Newtonsoft.Json.dll">
       <publishTime>04/08/2017 11:47:00</publishTime>
     </File>
+    <File Include="bin/PdfSharp.dll">
+      <publishTime>04/14/2017 17:27:12</publishTime>
+    </File>
     <File Include="bin/ProfessionalEvaluation.Model.dll">
-      <publishTime>04/11/2017 11:32:48</publishTime>
+      <publishTime>04/17/2017 14:00:35</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.Persistence.dll">
-      <publishTime>04/11/2017 11:32:47</publishTime>
+      <publishTime>04/17/2017 10:54:59</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.TO.dll">
-      <publishTime>04/11/2017 11:32:46</publishTime>
+      <publishTime>04/17/2017 10:54:56</publishTime>
+    </File>
+    <File Include="bin/ProfessionalEvaluation.Utilities.dll">
+      <publishTime>04/17/2017 14:00:33</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.Website.dll">
-      <publishTime>04/11/2017 11:32:50</publishTime>
+      <publishTime>04/17/2017 14:00:36</publishTime>
     </File>
     <File Include="bin/System.Net.Http.dll">
       <publishTime>04/08/2017 11:47:08</publishTime>
@@ -105,17 +114,38 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
     <File Include="packages.config">
       <publishTime>04/08/2017 11:47:18</publishTime>
     </File>
+    <File Include="Views/Assesment/AlreadyDone.cshtml">
+      <publishTime>04/14/2017 15:10:49</publishTime>
+    </File>
+    <File Include="Views/Assesment/Done.cshtml">
+      <publishTime>04/14/2017 15:10:55</publishTime>
+    </File>
+    <File Include="Views/Assesment/Execution.cshtml">
+      <publishTime>04/17/2017 12:17:51</publishTime>
+    </File>
     <File Include="Views/Assesment/Index.cshtml">
-      <publishTime>04/10/2017 14:50:57</publishTime>
+      <publishTime>04/17/2017 12:12:36</publishTime>
+    </File>
+    <File Include="Views/Assesment/Instructions.cshtml">
+      <publishTime>04/17/2017 12:14:19</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>04/11/2017 11:29:17</publishTime>
+      <publishTime>04/17/2017 10:22:27</publishTime>
+    </File>
+    <File Include="Views/Mail/Index.cshtml">
+      <publishTime>04/17/2017 12:42:48</publishTime>
+    </File>
+    <File Include="Views/Pdf/Index.cshtml">
+      <publishTime>04/17/2017 13:42:21</publishTime>
+    </File>
+    <File Include="Views/Shared/_AssesmentLayout.cshtml">
+      <publishTime>04/17/2017 11:31:57</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/08/2017 11:46:27</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/11/2017 11:32:55</publishTime>
+      <publishTime>04/17/2017 12:36:18</publishTime>
     </File>
   </ItemGroup>
 </Project>

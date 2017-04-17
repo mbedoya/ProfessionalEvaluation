@@ -1,29 +1,38 @@
-﻿using System;
+﻿using ProfessionalEvaluation.TO;
+using ProfessionalEvaluation.TO.AssesmentAnalysis;
+using ProfessionalEvaluation.TO.AssesmentResults;
+using ProfessionalEvaluation.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Web;
+using System.Web.Mvc;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProfessionalEvaluation.Utilities;
-using ProfessionalEvaluation.TO.AssesmentResults;
-using ProfessionalEvaluation.TO;
-using ProfessionalEvaluation.TO.AssesmentAnalysis;
-
-namespace ProfessionalEvaluationUnitTest.Tests
+namespace ProfessionalEvaluation.Website.Controllers
 {
-    [TestClass]
-    public class PdfTest
+    public class PdfController : Controller
     {
-        [TestMethod]
-        public void GenerateSimplePdf_PdfIsCreated_NoExceptionsThrown()
-        {
-            AssesmentReportTO report = new AssesmentReportTO();
-            report.Sections = GetReportSections();
-            report.AssesmentInfo = GetAssesmentInfo();
-            report.Analysis = GetAnalysis();
+        //
+        // GET: /Pdf/
 
-            Pdf.GenerateSimplePdf(report);
-            Assert.IsTrue(true);
+        public ActionResult Index()
+        {
+            MesssageTO message = new MesssageTO();
+            message.Text = "Successful";
+            try
+            {
+                AssesmentReportTO report = new AssesmentReportTO();
+                report.Sections = GetReportSections();
+                report.AssesmentInfo = GetAssesmentInfo();
+                report.Analysis = GetAnalysis();
+
+                Pdf.GenerateSimplePdf(report);
+            }
+            catch (Exception ex)
+            {
+                message.Text = ex.Message;
+            }
+            return View(message);
         }
 
         private List<SectionReportTO> GetReportSections()
@@ -67,5 +76,6 @@ namespace ProfessionalEvaluationUnitTest.Tests
 
             return analysis;
         }
+
     }
 }

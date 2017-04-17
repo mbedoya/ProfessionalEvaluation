@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 
 using ProfessionalEvaluation.Utilities;
+using ProfessionalEvaluation.TO.AssesmentAnalysis;
 
 namespace ProfessionalEvaluation.Model
 {
@@ -267,7 +268,46 @@ namespace ProfessionalEvaluation.Model
                 report.Sections.Add(section);
             }
 
-            Pdf.GenerateSimplePdf(report);
+            report.Analysis = GetAnalysis();
+            string savedFilePath = Pdf.GenerateSimplePdf(report);
+            SendReport(savedFilePath);
+        }
+
+        private AssesmentAnalysisReportTO GetAnalysis()
+        {
+            AssesmentAnalysisReportTO analysis = AnalysisPersistence.GetAssesmentAnalysis(id);
+
+            //Set Senority based on points
+            if (analysis.RoleLevels != null && analysis.RoleLevels.Count > 0)
+            {
+                foreach (var item in analysis.RoleLevels)
+                {
+                    if (analysis.RoleResult.Points >= item.Points)
+                    {
+                        analysis.RoleResult.Title = analysis.RoleResult.Title + " " + item.Name;
+                        break;
+                    }
+                }                
+            }
+
+            return analysis;
+        }
+
+        private void SendReport(string filePath)
+        {
+            MailMessageTO message = new MailMessageTO();
+            message.Title = "Resultado Evaluación " + info.PersonName;
+            message.ToEmail = "mauricio.bedoya@gmail.com";
+            message.ToName = info.PersonName;
+
+            string body = String.Format("<p>Buenos días,</p><p>Estamos enviando el resultado de la evaluación '{0}' de {1}</p><p>Saludos cordiales,</p>",
+                info.Evaluation.Name, info.PersonName);
+            message.Body = body;
+            message.Attachements = new List<string>();
+            message.Attachements.Add(filePath);
+
+            Mail mail = new Mail(message);
+            mail.Send();
         }
 
         private void UpdateSectionResponseInfo()

@@ -5,7 +5,7 @@
 
 @section css{
     <!-- Custom CSS -->
-    <link href="/css/shop-homepage.css" rel="stylesheet">
+    <link href="@Url.Content("~/css/shop-homepage.css")" rel="stylesheet">
 }
 
 <!-- Page Content -->
@@ -214,7 +214,7 @@
         }
 
         function endEvaluation() {
-            location.href = "/" + controllerName + "/Done";
+            location.href = "/" + siteUrlPrefix + controllerName + "/Done";
         }
 
         function answerQuestion(index, testDoneAfterThisAnswer) {

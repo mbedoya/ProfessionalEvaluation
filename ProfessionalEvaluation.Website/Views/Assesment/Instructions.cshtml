@@ -4,7 +4,7 @@
 
 @section css{
     <!-- Custom CSS -->
-    <link href="/css/shop-homepage.css" rel="stylesheet">
+    <link href="@Url.Content("~/css/shop-homepage.css")" rel="stylesheet">
 }
 
 <!-- Page Content -->
@@ -119,7 +119,7 @@
                         if (data && data.result) {
 
                             if (data.result.toLowerCase() == "successful") {
-                                location.href = "/" + controllerName + "/Execution";
+                                location.href = "/" + siteUrlPrefix + controllerName + "/Execution";
                             } else {
 
                                 console.log(data.result);

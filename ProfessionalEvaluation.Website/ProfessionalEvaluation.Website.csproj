@@ -115,6 +115,8 @@
     <Compile Include="Controllers\AssesmentController.cs" />
     <Compile Include="Controllers\EvaluationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MailController.cs" />
+    <Compile Include="Controllers\PdfController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -153,6 +155,10 @@
       <Project>{8d8861e7-826e-45fe-93a0-4995b5708036}</Project>
       <Name>ProfessionalEvaluation.TO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ProfessionalEvaluation.Utilities\ProfessionalEvaluation.Utilities.csproj">
+      <Project>{1d177c5f-08e9-4204-a6c0-5db7edb5de20}</Project>
+      <Name>ProfessionalEvaluation.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Assesment\Index.cshtml" />
@@ -164,6 +170,8 @@
     <Content Include="Views\Assesment\Execution.cshtml" />
     <Content Include="Views\Assesment\Done.cshtml" />
     <Content Include="Views\Assesment\AlreadyDone.cshtml" />
+    <Content Include="Views\Mail\Index.cshtml" />
+    <Content Include="Views\Pdf\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

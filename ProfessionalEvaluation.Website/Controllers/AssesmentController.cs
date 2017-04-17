@@ -96,7 +96,14 @@ namespace ProfessionalEvaluation.Website.Controllers
                 return Json(new { }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { result = assesment.AnswerQuestion(responseIndex).ToString()}, JsonRequestBehavior.AllowGet);
+            try
+            {
+                return Json(new { result = assesment.AnswerQuestion(responseIndex).ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }            
         }
 
         public ActionResult UpdateLeftTime()
