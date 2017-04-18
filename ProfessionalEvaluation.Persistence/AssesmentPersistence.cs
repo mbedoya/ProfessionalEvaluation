@@ -11,8 +11,9 @@ namespace ProfessionalEvaluation.Persistence
     public class AssesmentPersistence : Persistence
     {
         private static string command = 
-                "SELECT a.ID, a.AssesmentID, a.DateStarted, a.DateFinished, a.PersonName ,c.Name, c.LogoPath, e.ID as EvalID, e.Name as EvalName, e.Description as EvalDescription " +
+                "SELECT a.ID, a.AssesmentID, a.DateStarted, a.DateFinished, a.PersonName, at.Name as AssesmentType ,c.Name, c.LogoPath, e.ID as EvalID, e.Name as EvalName, e.Description as EvalDescription " +
                 " FROM assesment a " +
+                " JOIN assesment_type at ON a.AssesmentTypeID = at.ID " +
                 " JOIN company c ON a.CompanyID = c.ID" +
                 " JOIN evaluation e ON a.EvaluationID = e.ID" +
                 " WHERE a.{0} = '{1}'";
@@ -154,6 +155,12 @@ namespace ProfessionalEvaluation.Persistence
             {
                 element.DateFinished = Convert.ToDateTime(table.Rows[0]["DateFinished"]);
                 element.Status = AssesmentStatus.Done;
+            }
+
+            element.Type = AssementType.Internal;
+            if (table.Rows[0]["AssesmentType"].ToString().ToLower() == "candidate")
+            {
+                element.Type = AssementType.Candidate;
             }
 
             element.Company = new CompanyTO();

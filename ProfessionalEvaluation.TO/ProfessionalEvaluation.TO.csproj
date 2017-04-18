@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnswerTO.cs" />
+    <Compile Include="AssesmentAnalysis\AssesmentCandidateTO.cs" />
     <Compile Include="AssesmentAnalysis\AssesmentRoleLevelTO.cs" />
     <Compile Include="AssesmentAnalysis\AssesmentAnalysisReportTO.cs" />
     <Compile Include="AssesmentAnalysis\AssesmentResultComparisonTO.cs" />

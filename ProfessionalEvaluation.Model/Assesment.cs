@@ -280,14 +280,20 @@ namespace ProfessionalEvaluation.Model
             //Set Senority based on points
             if (analysis.RoleLevels != null && analysis.RoleLevels.Count > 0)
             {
+                string roleTitle = analysis.RoleLevels[0].Name;
                 foreach (var item in analysis.RoleLevels)
                 {
-                    if (analysis.RoleResult.Points >= item.Points)
+                    if (item.Points <= analysis.RoleResult.Points)
                     {
-                        analysis.RoleResult.Title = analysis.RoleResult.Title + " " + item.Name;
-                        break;
+                        roleTitle = item.Name;
                     }
-                }                
+                }
+                analysis.RoleResult.Title = analysis.RoleResult.Title + " " + roleTitle;
+            }
+
+            if (info.Type ==  AssementType.Candidate)
+            {
+                analysis.Candidates = AnalysisPersistence.GetAssesmentCandidates(id).OrderByDescending(x => x.Points).ToList();
             }
 
             return analysis;
@@ -300,7 +306,7 @@ namespace ProfessionalEvaluation.Model
             message.ToEmail = "mauricio.bedoya@gmail.com";
             message.ToName = info.PersonName;
 
-            string body = String.Format("<p>Buenos días,</p><p>Estamos enviando el resultado de la evaluación '{0}' de {1}</p><p>Saludos cordiales,</p>",
+            string body = String.Format("<p>Buenos días,</p><p>Estamos enviando el resultado de la evaluación {0} de {1}</p><p>Saludos cordiales,</p>",
                 info.Evaluation.Name, info.PersonName);
             message.Body = body;
             message.Attachements = new List<string>();

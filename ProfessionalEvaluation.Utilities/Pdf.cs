@@ -16,15 +16,31 @@ namespace ProfessionalEvaluation.Utilities
     public class Pdf
     {
         private static string fontName = "Baskerville";
+        private static XFont regularFont = new XFont(fontName, 14, XFontStyle.Regular);
+        private static XFont subtitleFont = new XFont(fontName, 14, XFontStyle.BoldItalic);
+        private static XFont smallFont = new XFont(fontName, 12, XFontStyle.Regular);
 
         public static string GenerateSimplePdf(AssesmentReportTO report)
         {
-            const string PdfGenerationPathSetting = "PdfGenerationPath";
-
             // Create a new PDF document
             PdfDocument document = new PdfDocument();
             document.Info.Title = "Evaluación Laboru Tech";
 
+            const string PdfGenerationPathSetting = "PdfGenerationPath";
+
+            AddMainPage(document, report);
+            AddComparisonsPage(document, report);
+
+            string filePath = String.Format("{0}AssesmentReport_{1}.pdf", ConfigurationManager.AppSettings[PdfGenerationPathSetting], report.AssesmentInfo.ID);
+            document.Save(filePath);
+            document.Close();
+            document.Dispose();
+
+            return filePath;
+        }
+
+        private static void AddComparisonsPage(PdfDocument document, AssesmentReportTO report)
+        {
             // Create an empty page
             PdfPage page = document.AddPage();
 
@@ -36,21 +52,78 @@ namespace ProfessionalEvaluation.Utilities
             AddHeader(gfx, report, page);
             AddAbout(gfx, report);
 
-            XFont regularFont = new XFont(fontName, 14, XFontStyle.Regular);
+            // -------------------Info Section
+            int heightSpace = 70;
+            int leftMargin = 20;
+            int subtitleWidth = 150;
+            int sectionTextWidth = 180;
+            int numberWidth = 30;
+
+            if (report.Analysis.Candidates != null && report.Analysis.Candidates.Count > 0)
+            {
+                // Sections Results
+                heightSpace = heightSpace + 50;
+                gfx.DrawString("Ranking de candidatos", subtitleFont, XBrushes.Black,
+                  new XRect(leftMargin, heightSpace, subtitleWidth, 20),
+                  XStringFormats.TopLeft);
+
+                int index = 1;
+                int candidatePadding = 20;
+                foreach (var item in report.Analysis.Candidates)
+                {
+                    heightSpace = heightSpace + 30;
+                    XBrush brush = XBrushes.Black;
+
+                    if (report.AssesmentInfo.ID == item.AssesmentID)
+                    {
+                        brush = XBrushes.White;
+                        gfx.DrawRectangle(XBrushes.Blue, new XRect(leftMargin, heightSpace-2, page.Width - leftMargin*2, 20 + 2));
+                    }
+
+                    //Position
+                    tf.DrawString(index.ToString(), regularFont, brush,
+                  new XRect(leftMargin + candidatePadding, heightSpace, numberWidth, 20),
+                  XStringFormats.TopLeft);
+
+                    //Name
+                    tf.DrawString(item.Name, regularFont, brush,
+                  new XRect(leftMargin + candidatePadding + numberWidth + 20, heightSpace, sectionTextWidth, 20),
+                  XStringFormats.TopLeft);
+
+                    //Points
+                    tf.DrawString(item.Points.ToString() + " puntos", regularFont, brush,
+                  new XRect(leftMargin + candidatePadding + numberWidth + sectionTextWidth + 20, heightSpace, numberWidth, 20),
+                  XStringFormats.TopLeft);
+
+                    index++;
+                }
+
+                // Sections Results
+                heightSpace = heightSpace + 30;
+                gfx.DrawString("* El máximo de puntos posibles es " + report.Analysis.RoleResult.PossiblePoints, smallFont, XBrushes.Black,
+                  new XRect(leftMargin, heightSpace, subtitleWidth, 20),
+                  XStringFormats.TopLeft);
+            }            
+        }
+
+        private static void AddMainPage(PdfDocument document, AssesmentReportTO report)
+        {
+            // Create an empty page
+            PdfPage page = document.AddPage();
+
+            // Get an XGraphics object for drawing
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XTextFormatter tf = new XTextFormatter(gfx);
+            tf.Alignment = XParagraphAlignment.Left;
+
+            AddHeader(gfx, report, page);
+            AddAbout(gfx, report);
 
             // -------------------Info Section
             int heightSpace = 70;
             int leftMargin = 20;
             int subtitleWidth = 150;
             int sectionTextWidth = 180;
-
-            XFont subtitleFont = new XFont(fontName, 14, XFontStyle.BoldItalic);
-
-            // Evaluation Name
-            XFont titleFont = new XFont(fontName, 15, XFontStyle.BoldItalic);
-            gfx.DrawString(report.AssesmentInfo.Evaluation.Name.ToUpper(), titleFont, XBrushes.Black,
-              new XRect(0, heightSpace, page.Width, 20),
-              XStringFormats.Center);
 
             // Person Name
             heightSpace = heightSpace + 50;
@@ -109,7 +182,7 @@ namespace ProfessionalEvaluation.Utilities
                 brushes.Add(XBrushes.Green);
 
                 if (report.Analysis.RoleLevels != null)
-                {                    
+                {
                     int brushIndex = brushes.Count - report.Analysis.RoleLevels.Count;
                     heightSpace = heightSpace + 30;
                     foreach (var item in report.Analysis.RoleLevels)
@@ -124,13 +197,9 @@ namespace ProfessionalEvaluation.Utilities
                             }
                         }
 
-                        //Rectangle
-                        //gfx.DrawRectangle(brushes[brushIndex],
-                      //new XRect(leftMargin, heightSpace, colorWidth, 20));
-
                         //Name
                         tf.DrawString(item.Name, regularFont, XBrushes.Black,
-                      new XRect(leftMargin + colorWidth + 10, heightSpace, roleTitleWidth, paragraphHeight),
+                      new XRect(leftMargin + colorWidth, heightSpace, roleTitleWidth + 10, paragraphHeight),
                       XStringFormats.TopLeft);
 
                         //Description
@@ -140,7 +209,7 @@ namespace ProfessionalEvaluation.Utilities
 
                         heightSpace = heightSpace + paragraphHeight + 10;
                         brushIndex++;
-                    }                    
+                    }
                 }
             }
 
@@ -173,12 +242,6 @@ namespace ProfessionalEvaluation.Utilities
 
                 heightSpace = heightSpace + 30;
             }
-
-            string filePath = String.Format("{0}AssesmentReport_{1}.pdf", ConfigurationManager.AppSettings[PdfGenerationPathSetting], report.AssesmentInfo.ID);
-            document.Save(filePath);
-            document.Close();
-
-            return filePath;
         }
 
         private static XBrush GetBrushByPercentage(double p)
@@ -220,6 +283,12 @@ namespace ProfessionalEvaluation.Utilities
             XImage clientImage = XImage.FromFile(HttpContext.Current.Server.MapPath("~/img/" + report.AssesmentInfo.Company.Logo));
             gfx.DrawRectangle(brush, 0, 50, page.Width, 1);
             gfx.DrawImage(clientImage, 2, 2, 180, 45);
+
+            // Evaluation Name
+            XFont titleFont = new XFont(fontName, 15, XFontStyle.BoldItalic);
+            gfx.DrawString(report.AssesmentInfo.Evaluation.Name.ToUpper(), titleFont, XBrushes.Black,
+              new XRect(0, 70, page.Width, 20),
+              XStringFormats.Center);
         }
 
         private static void AddAbout(XGraphics gfx, AssesmentReportTO report)
@@ -227,25 +296,30 @@ namespace ProfessionalEvaluation.Utilities
             XPen separatorsPen = new XPen(XColor.FromArgb(0, 238, 238, 238), 1);
 
             // About font
-            XFont aboutFont = new XFont(fontName, 9, XFontStyle.Regular);
+            XFont aboutFont = new XFont(fontName, 7, XFontStyle.Regular);
+            XBrush aboutBrushText = XBrushes.Silver;
 
             //Logo and Separators
-            int imageX = 150;
-            int imageWidth = 46;
-            int imageHeight = 64;
+            int imageX = 200;
+            int imageWidth = 41;
+            int imageHeight = 58;
 
             int separatorX = imageX + imageWidth + 15;
             int aboutTextX = separatorX + 20;
-            int imageY = 750;
+            int imageY = 770;
+
             XImage laboruImage = XImage.FromFile(HttpContext.Current.Server.MapPath("~/img/logo-laboru.png"));
             gfx.DrawImage(laboruImage, imageX, imageY, imageWidth, imageHeight);
             gfx.DrawLine(separatorsPen, separatorX, imageY, separatorX, imageY + imageHeight);
 
             //Text
-            gfx.DrawString("Elaborado por Laboru para " + report.AssesmentInfo.Company.Name, aboutFont, XBrushes.Silver,
-              new XRect(aboutTextX, imageY + 20, 200, 20),
+            gfx.DrawString("Elaborado por Laboru para " + report.AssesmentInfo.Company.Name, aboutFont, aboutBrushText,
+              new XRect(aboutTextX, imageY + 10, 200, 20),
               XStringFormats.TopLeft);
-            gfx.DrawString("Todos los derechos reservados", aboutFont, XBrushes.Silver,
+            gfx.DrawString("Todos los derechos reservados", aboutFont, aboutBrushText,
+              new XRect(aboutTextX, imageY + 25, 200, 20),
+              XStringFormats.TopLeft);
+            gfx.DrawString("http://laboru.co/tech", aboutFont, aboutBrushText,
               new XRect(aboutTextX, imageY + 40, 200, 20),
               XStringFormats.TopLeft);
         }

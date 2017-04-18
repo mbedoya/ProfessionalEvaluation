@@ -10,5 +10,6 @@ namespace ProfessionalEvaluation.TO.AssesmentAnalysis
         public AssesmentRoleResultTO RoleResult { get; set; }
         public List<AssesmentRoleLevelTO> RoleLevels { get; set; }
         public AssesmentResultComparisonTO Comparisons { get; set; }
+        public List<AssesmentCandidateTO> Candidates { get; set; }
     }
 }

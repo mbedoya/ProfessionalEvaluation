@@ -13,7 +13,7 @@ namespace ProfessionalEvaluation.Persistence
         {
             AssesmentAnalysisReportTO analysis = new AssesmentAnalysisReportTO();
             analysis.RoleResult = GetRoleResult(assesmentID);
-            analysis.RoleLevels = GetRoleLevels(assesmentID);
+            analysis.RoleLevels = GetRoleLevels(assesmentID).OrderBy(x => x.Points).ToList();
 
             return analysis;
         }
@@ -64,6 +64,36 @@ namespace ProfessionalEvaluation.Persistence
             }
 
             return points;
+        }
+
+        public static List<AssesmentCandidateTO> GetAssesmentCandidates(int assesmentID)
+        {
+            List<AssesmentCandidateTO> candidates = new List<AssesmentCandidateTO>();
+
+            string execCommand =
+                string.Format("SELECT a.ID, a.PersonName, IFNULL(SUM(Points), 0)  as Points " +
+                " FROM question q " +
+                " JOIN assesment_response ar on q.id = ar.questionid " +
+                " JOIN assesment a on ar.AssesmentID = a.ID " +
+                " WHERE ar.answerisright = 1 AND a.EvaluationID = (SELECT EvaluationID FROM assesment WHERE ID = {0})  " +
+                " GROUP BY a.ID, a.PersonName ", assesmentID);
+
+            DataTable levelsTable = ExecuteCommand(execCommand);
+            
+            if (levelsTable != null && levelsTable.Rows.Count > 0)
+            {
+                foreach (DataRow item in levelsTable.Rows)
+                {
+                    candidates.Add(new AssesmentCandidateTO()
+                    {
+                        AssesmentID = Convert.ToInt32(item["ID"]),
+                        Name = Convert.ToString(item["PersonName"]),
+                        Points = Convert.ToInt32(item["Points"])
+                    });
+                }
+            }
+
+            return candidates;
         }
 
         public static int GetAssesmentPossiblePoints(int assesmentID)

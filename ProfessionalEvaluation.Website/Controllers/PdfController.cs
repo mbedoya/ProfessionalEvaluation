@@ -50,8 +50,8 @@ namespace ProfessionalEvaluation.Website.Controllers
         {
             AssesmentTO info = new AssesmentTO();
             info.Company = new CompanyTO();
-            info.Company.Name = "Perceptio";
-            info.Company.Logo = "logo-perceptio.png";
+            info.Company.Name = "Intrepidez";
+            info.Company.Logo = "logo-intrepidez.png";
 
             info.Evaluation = new EvaluationTO();
             info.Evaluation.Name = "EVALUACIÓN INTEGRAL DESARROLLADOR DE SOFTWARE";
@@ -69,12 +69,43 @@ namespace ProfessionalEvaluation.Website.Controllers
             analysis.RoleResult = new AssesmentRoleResultTO() { Title = "DESARROLLADOR JUNIOR", Points = 100, PossiblePoints = 200 };
 
             List<AssesmentRoleLevelTO> levels = new List<AssesmentRoleLevelTO>();
+            levels.Add(new AssesmentRoleLevelTO() { Name = "BAJA CAPACIDAD", Description = "No cuenta con los conocimientos para el desarrollo de software." });
             levels.Add(new AssesmentRoleLevelTO() { Name = "JUNIOR", Description = "No debería ejecutar proyectos sin ayuda de expertos, no cuenta con el conocimiento ni experiencia necesarios para implementar soluciones complejas." });
             levels.Add(new AssesmentRoleLevelTO() { Name = "MIDDLE", Description = "Puede ejecutar proyectos sin ayuda de expertos" });
             levels.Add(new AssesmentRoleLevelTO() { Name = "SENIOR", Description = "Puede ejecutar proyectos solo, cuenta con el conocimiento suficiente." });
             analysis.RoleLevels = levels;
 
+            analysis.Candidates = GetAssesmentCandidates().OrderBy( x => x.Points ).ToList();
+
             return analysis;
+        }
+
+        private List<AssesmentCandidateTO> GetAssesmentCandidates()
+        {
+            List<AssesmentCandidateTO> candidates = new List<AssesmentCandidateTO>();
+
+            candidates.Add(new AssesmentCandidateTO()
+            {
+                AssesmentID = 1,
+                Name = "Mauricio Bedoya",
+                Points = 100
+            });
+
+            candidates.Add(new AssesmentCandidateTO()
+            {
+                AssesmentID = 2,
+                Name = "Juan Andrade",
+                Points = 50
+            });
+
+            candidates.Add(new AssesmentCandidateTO()
+            {
+                AssesmentID = 3,
+                Name = "Felipe Quinteros",
+                Points = 150
+            });
+
+            return candidates;
         }
 
     }
