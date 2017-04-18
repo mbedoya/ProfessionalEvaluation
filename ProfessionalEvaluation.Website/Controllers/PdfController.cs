@@ -40,6 +40,9 @@ namespace ProfessionalEvaluation.Website.Controllers
             List<SectionReportTO> list = new List<SectionReportTO>();
             list.Add(new SectionReportTO() { Name = "Capacidad de análisis", Percentage = 50 });
             list.Add(new SectionReportTO() { Name = "Lógica de Programación", Percentage = 75 });
+            list.Add(new SectionReportTO() { Name = "Bases de datos", Percentage = 95 });
+            list.Add(new SectionReportTO() { Name = "Análisis & Diseño", Percentage = 45 });
+            list.Add(new SectionReportTO() { Name = "Metodologías de desarrollo", Percentage = 80 });
             list.Add(new SectionReportTO() { Name = "Ejecución de pruebas", Percentage = 100 });
             list.Add(new SectionReportTO() { Name = "Inglés", Percentage = 30 });
 

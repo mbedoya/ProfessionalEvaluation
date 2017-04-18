@@ -61,7 +61,7 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
       <publishTime>04/14/2017 17:27:12</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.Model.dll">
-      <publishTime>04/18/2017 12:13:45</publishTime>
+      <publishTime>04/18/2017 16:11:23</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.Persistence.dll">
       <publishTime>04/18/2017 12:13:42</publishTime>
@@ -70,10 +70,10 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
       <publishTime>04/18/2017 12:13:38</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.Utilities.dll">
-      <publishTime>04/18/2017 12:13:43</publishTime>
+      <publishTime>04/18/2017 16:08:11</publishTime>
     </File>
     <File Include="bin/ProfessionalEvaluation.Website.dll">
-      <publishTime>04/18/2017 12:13:47</publishTime>
+      <publishTime>04/18/2017 16:11:25</publishTime>
     </File>
     <File Include="bin/System.Net.Http.dll">
       <publishTime>04/08/2017 11:47:08</publishTime>
@@ -129,6 +129,9 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
     <File Include="Views/Assesment/Instructions.cshtml">
       <publishTime>04/17/2017 12:14:19</publishTime>
     </File>
+    <File Include="Views/Company/Index.cshtml">
+      <publishTime>04/18/2017 15:43:50</publishTime>
+    </File>
     <File Include="Views/Home/Index.cshtml">
       <publishTime>04/17/2017 10:22:27</publishTime>
     </File>
@@ -140,6 +143,9 @@ editando este archivo MSBuild. Para conocer más acerca de esto, visite http://g
     </File>
     <File Include="Views/Shared/_AssesmentLayout.cshtml">
       <publishTime>04/17/2017 11:31:57</publishTime>
+    </File>
+    <File Include="Views/Shared/_CompanyLayout.cshtml">
+      <publishTime>04/18/2017 15:47:19</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/08/2017 11:46:27</publishTime>

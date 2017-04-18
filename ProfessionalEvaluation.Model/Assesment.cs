@@ -303,7 +303,7 @@ namespace ProfessionalEvaluation.Model
         {
             MailMessageTO message = new MailMessageTO();
             message.Title = "Resultado Evaluación " + info.PersonName;
-            message.ToEmail = "mauricio.bedoya@gmail.com";
+            message.ToEmail = "julio.medina@perceptio.net";
             message.ToName = info.PersonName;
 
             string body = String.Format("<p>Buenos días,</p><p>Estamos enviando el resultado de la evaluación {0} de {1}</p><p>Saludos cordiales,</p>",

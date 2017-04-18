@@ -17,6 +17,7 @@ namespace ProfessionalEvaluation.Utilities
     {
         private static string fontName = "Baskerville";
         private static XFont regularFont = new XFont(fontName, 14, XFontStyle.Regular);
+        private static XFont regularBoldFont = new XFont(fontName, 14, XFontStyle.Bold);
         private static XFont subtitleFont = new XFont(fontName, 14, XFontStyle.Bold);
         private static XFont smallFont = new XFont(fontName, 12, XFontStyle.Regular);
         private static XFont tinyFont = new XFont(fontName, 10, XFontStyle.Regular);
@@ -64,7 +65,7 @@ namespace ProfessionalEvaluation.Utilities
             {
                 // Sections Results
                 heightSpace = heightSpace + 50;
-                gfx.DrawString("RAKING DE CANDIDATOS", subtitleFont, XBrushes.Black,
+                gfx.DrawString("RANKING DE CANDIDATOS", subtitleFont, XBrushes.Black,
                   new XRect(leftMargin, heightSpace, subtitleWidth, 20),
                   XStringFormats.TopLeft);
 
@@ -81,7 +82,7 @@ namespace ProfessionalEvaluation.Utilities
                     if (report.AssesmentInfo.ID == item.AssesmentID)
                     {
                         brush = XBrushes.White;
-                        gfx.DrawRectangle(XBrushes.Blue, new XRect(leftMargin, heightSpace-2, page.Width - leftMargin*2, 20 + 2));
+                        gfx.DrawRectangle(XBrushes.DarkSlateGray, new XRect(leftMargin, heightSpace-2, page.Width - leftMargin*2, 20 + 2));
                     }
 
                     //Position
@@ -105,6 +106,21 @@ namespace ProfessionalEvaluation.Utilities
                 // Sections Results
                 heightSpace = heightSpace + 30;
                 gfx.DrawString("* El máximo de puntos posibles es " + report.Analysis.RoleResult.PossiblePoints, smallFont, XBrushes.Black,
+                  new XRect(leftMargin, heightSpace, subtitleWidth, 20),
+                  XStringFormats.TopLeft);
+
+
+                heightSpace = heightSpace + 50;
+                gfx.DrawString("COMPARACIÓN DETALLADA DE CANDIDATOS", subtitleFont, XBrushes.Black,
+                  new XRect(leftMargin, heightSpace, subtitleWidth, 20),
+                  XStringFormats.TopLeft);
+
+                heightSpace = heightSpace + 5;
+                AddTitleLine(gfx, page, heightSpace);
+
+                // Sections Results
+                heightSpace = heightSpace + 30;
+                gfx.DrawString("-- Próximamente --", regularFont, XBrushes.Black,
                   new XRect(leftMargin, heightSpace, subtitleWidth, 20),
                   XStringFormats.TopLeft);
             }            
@@ -136,12 +152,18 @@ namespace ProfessionalEvaluation.Utilities
             int roleTitleWidth = 90;
             int colorWidth = 20;
 
+            //XBrush backgroundBrush = new 
+            XPen backgroundPen = new XPen(XColor.FromArgb(0, 238, 238, 238), 1);
+            gfx.DrawRectangle(XBrushes.DarkSlateGray, new XRect(10, heightSpace + 35, page.Width - 10*2, 105));
+
+            XBrush resumeBrush = XBrushes.White;
+
             // Person Name
             heightSpace = heightSpace + 50;
-            gfx.DrawString("Persona evaluada:", subtitleFont, XBrushes.Black,
+            gfx.DrawString("Persona evaluada:", subtitleFont, resumeBrush,
               new XRect(leftMargin, heightSpace, subtitleWidth, 20),
               XStringFormats.TopLeft);
-            gfx.DrawString(report.AssesmentInfo.PersonName, regularFont, XBrushes.Black,
+            gfx.DrawString(report.AssesmentInfo.PersonName, regularFont, resumeBrush,
               new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
               XStringFormats.TopLeft);
 
@@ -149,25 +171,25 @@ namespace ProfessionalEvaluation.Utilities
             {
                 // Title Obtained
                 heightSpace = heightSpace + 30;
-                gfx.DrawString("Resultado:", subtitleFont, XBrushes.Black,
+                gfx.DrawString("Resultado:", subtitleFont, resumeBrush,
                   new XRect(leftMargin, heightSpace, roleTitleWidth, 20),
                   XStringFormats.TopLeft);
-                gfx.DrawString(report.Analysis.RoleResult.Title, regularFont, XBrushes.Black,
+                gfx.DrawString(report.Analysis.RoleResult.Title.ToUpper(), regularFont, resumeBrush,
                   new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
                   XStringFormats.TopLeft);
 
                 // Points Obtained
                 heightSpace = heightSpace + 30;
-                gfx.DrawString("Puntos:", subtitleFont, XBrushes.Black,
+                gfx.DrawString("Puntos:", subtitleFont, resumeBrush,
                   new XRect(leftMargin, heightSpace, roleTitleWidth, 20),
                   XStringFormats.TopLeft);
-                gfx.DrawString(report.Analysis.RoleResult.Points.ToString() + " / " + report.Analysis.RoleResult.PossiblePoints.ToString(), regularFont, XBrushes.Black,
+                gfx.DrawString(report.Analysis.RoleResult.Points.ToString() + " / " + report.Analysis.RoleResult.PossiblePoints.ToString(), regularFont, resumeBrush,
                   new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
                   XStringFormats.TopLeft);
             }
 
             // Sections Results
-            heightSpace = heightSpace + 70;
+            heightSpace = heightSpace + 60;
             gfx.DrawString("DETALLE DE LA EVALUACIÓN", subtitleFont, XBrushes.Black,
               new XRect(leftMargin, heightSpace, subtitleWidth, 20),
               XStringFormats.TopLeft);
@@ -177,16 +199,8 @@ namespace ProfessionalEvaluation.Utilities
 
             if (report.Analysis != null)
             {
-                List<XSolidBrush> brushes = new List<XSolidBrush>();
-                brushes.Add(XBrushes.Yellow);
-                brushes.Add(XBrushes.YellowGreen);
-                brushes.Add(XBrushes.Orange);
-                brushes.Add(XBrushes.LightGreen);
-                brushes.Add(XBrushes.Green);
-
                 if (report.Analysis.RoleLevels != null)
                 {
-                    int brushIndex = brushes.Count - report.Analysis.RoleLevels.Count;
                     heightSpace = heightSpace + 30;
                     foreach (var item in report.Analysis.RoleLevels)
                     {
@@ -200,24 +214,29 @@ namespace ProfessionalEvaluation.Utilities
                             }
                         }
 
+                        XFont roleFont = regularFont;
+                        if (report.Analysis.RoleResult.Title.ToLower().Contains(item.Name.ToLower()))
+                        {
+                            roleFont = regularBoldFont;
+                        }
+
                         //Name
-                        tf.DrawString(item.Name, regularFont, XBrushes.Black,
+                        tf.DrawString(item.Name, roleFont, XBrushes.Black,
                       new XRect(leftMargin + colorWidth, heightSpace, roleTitleWidth + 10, paragraphHeight),
                       XStringFormats.TopLeft);
 
                         //Description
-                        tf.DrawString(item.Description, regularFont, XBrushes.Black,
+                        tf.DrawString(item.Description, roleFont, XBrushes.Black,
                       new XRect(leftMargin + roleTitleWidth + colorWidth + 10, heightSpace, 400, paragraphHeight),
                       XStringFormats.TopLeft);
 
                         heightSpace = heightSpace + paragraphHeight + 10;
-                        brushIndex++;
                     }
                 }
             }
 
             // Sections Results
-            heightSpace = heightSpace + 40;
+            heightSpace = heightSpace + 20;
             gfx.DrawString("DETALLE DE LAS CAPACIDADES", subtitleFont, XBrushes.Black,
               new XRect(leftMargin, heightSpace, subtitleWidth, 20),
               XStringFormats.TopLeft);
@@ -250,38 +269,6 @@ namespace ProfessionalEvaluation.Utilities
             }
         }
 
-        private static XBrush GetBrushByPercentage(double p)
-        {
-            XBrush brush = XBrushes.Red;
-            if (p >= 25 && p < 50)
-            {
-                brush = XBrushes.OrangeRed;
-            }
-            else
-            {
-                if (p >= 50 && p < 74)
-                {
-                    brush = XBrushes.Yellow;
-                }
-                else
-                {
-                    if (p >= 75 & p < 95)
-                    {
-                        brush = XBrushes.YellowGreen;
-                    }
-                    else
-                    {
-                        if (p >= 95)
-                        {
-                            brush = XBrushes.Green;
-                        }                        
-                    }
-                }
-            }
-
-            return brush;
-        }
-
         private static void AddHeader(XGraphics gfx, AssesmentReportTO report, PdfPage page)
         {
             //Client Header
@@ -290,11 +277,11 @@ namespace ProfessionalEvaluation.Utilities
             gfx.DrawRectangle(brush, 0, 50, page.Width, 1);
             gfx.DrawImage(clientImage, 2, 2, 180, 45);
 
-            gfx.DrawString("Fecha finalización:", tinyFont, XBrushes.Black,
-              new XRect(page.Width - 190, 30, 100, 20),
+            gfx.DrawString("Fecha de finalización:", tinyFont, XBrushes.Black,
+              new XRect(page.Width - 195, 30, 100, 20),
               XStringFormats.TopLeft);
             gfx.DrawString(report.AssesmentInfo.DateFinished.Value.ToString("MMMM dd yyyy"), tinyFont, XBrushes.Black,
-              new XRect(page.Width - 100, 30, 75, 20),
+              new XRect(page.Width - 95, 30, 75, 20),
               XStringFormats.TopLeft);
 
             // Evaluation Name
@@ -335,6 +322,38 @@ namespace ProfessionalEvaluation.Utilities
             gfx.DrawString("http://laboru.co/tech", aboutFont, aboutBrushText,
               new XRect(aboutTextX, imageY + 40, 200, 20),
               XStringFormats.TopLeft);
+        }
+
+        private static XBrush GetBrushByPercentage(double p)
+        {
+            XBrush brush = XBrushes.Red;
+            if (p >= 25 && p < 50)
+            {
+                brush = XBrushes.OrangeRed;
+            }
+            else
+            {
+                if (p >= 50 && p < 74)
+                {
+                    brush = XBrushes.Yellow;
+                }
+                else
+                {
+                    if (p >= 75 & p < 95)
+                    {
+                        brush = XBrushes.YellowGreen;
+                    }
+                    else
+                    {
+                        if (p >= 95)
+                        {
+                            brush = XBrushes.Green;
+                        }
+                    }
+                }
+            }
+
+            return brush;
         }
     }
 }

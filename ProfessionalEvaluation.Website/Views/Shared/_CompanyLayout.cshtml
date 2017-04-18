@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Laboru Tech - Evaluación Profesional</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href='@Url.Content("~/css/bootstrap.min.css")' rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="@Url.Content("~/vendor/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+
+    <!-- Assesment CSS -->
+    <link href='@Url.Content("~/css/assesment.css")' rel="stylesheet">
+
+    @RenderSection("css", false)
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Evaluación Profesional</a>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <p class="lead">
+                    <img id="company_logo" src='@Url.Content("~/img/logo-intrepidez.png")' />
+                </p>
+
+                <div id="sections" class="list-group">
+                    <a href="#" class="list-group-item">Candidatos</a>
+                    <a href="#" class="list-group-item">Empleados</a>
+                    <a href="#" class="list-group-item">Análisis</a>
+                    <a href="#" class="list-group-item">Hojas de vida de Expertos</a>
+                    <a href="#" class="list-group-item">Configuración</a>
+                </div>
+
+            </div>
+
+            <div class="col-md-9">
+
+                @RenderBody()
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Laboru Tech 2017</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src='@Url.Content("~/js/jquery.js")' ></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src='@Url.Content("/js/bootstrap.min.js")' ></script>
+
+    <script>
+
+        var siteUrlPrefix = '@Url.Content("~/")';
+        siteUrlPrefix = siteUrlPrefix.substring(1, siteUrlPrefix.length);
+
+        function showMessage(message, type) {
+
+            $("#modal_body").html(message);
+            $("#modal_opener").click();
+
+            //Auto close
+            setTimeout(function () {
+                $("#btn_close_modal").click();
+            }, 4000);
+        }
+
+        function showLoading() {
+            $("#loading_modal_opener").click();
+        }
+
+        function closeLoading() {
+            $("#btn_loading_close_modal").click();
+        }
+
+        function ajaxPost(controller, method, data, fx) {
+
+            $.ajax({
+                url: "/" + siteUrlPrefix + controller + "/" + method,
+                dataType: "json",
+                type: "POST",
+                data: data,
+                success: function (data) {
+                    fx(true, data);
+                },
+                error: function (a, b, c) {
+                    fx(false, a);
+                }
+            });
+        }
+
+        var showLoadingPopup = true;
+        function checkAndShowLoadingPopup() {
+
+            setInterval(function () {
+                if (showLoadingPopup) {
+                    showLoading();
+                }
+            }, 2000);
+        }
+
+        $(document).ready(function () {
+
+            function init() {
+
+            }
+
+            init();
+
+        });
+
+    </script>
+
+    @RenderSection("scripts", false)
+
+    <script>
+
+        //Listen for Assesment Data
+        document.body.addEventListener("AssesmentDataRetrieved", handleAssementDataRetrieved, false);
+
+    </script>
+
+    <!-- Trigger the modal with a button -->
+    <button id="modal_opener" type="button" data-toggle="modal" data-target="#myModal" style="visibility: hidden"></button>
+
+    <!-- Modal Message -->
+    <div id="myModal" class="modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btn_close_modal" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 id="modal_title" class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <span class="fa-stack fa-1x">
+                                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                                <i class="fa fa-info fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </div>
+                        <div class="col-md-11">
+                            <div id="modal_body"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Trigger the modal with a button -->
+    <button id="loading_modal_opener" type="button" data-toggle="modal" data-target="#loadingModal" data-keyboard="false" style="visibility: hidden"></button>
+
+    <!-- Modal Message -->
+    <div id="loadingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <button id="btn_loading_close_modal" type="button" class="close" data-dismiss="modal" style="visibility: hidden">&times;</button>
+                <div class="modal-body">
+                    <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle-o-notch fa-spin"></i>
+
+                    </span>
+                    Espera un momento...
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

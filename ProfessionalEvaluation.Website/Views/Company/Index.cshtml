@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_CompanyLayout.cshtml";
+}
+
+@section css{
+    <!-- Custom CSS -->
+    <link href="@Url.Content("~/css/shop-homepage.css")" rel="stylesheet">
+}
+
+<!-- Header -->
+<header class="jumbotron">
+    <h2 id="title">DASHBOARD</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                <i class="fa fa-user fa-stack-1x fa-inverse"></i>
+            </span>
+            <p><b>Candidatos</b></p>
+        </div>
+        <div class="col-md-6">
+            <p>24 Candidatos para DESARROLLADOR CON .NET</p>
+            <p>2 Candidatos para DESARROLLADOR CON JAVA</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                <i class="fa fa-users fa-stack-1x fa-inverse"></i>
+            </span>
+            <p><b>Empleados</b></p>
+        </div>
+        <div class="col-md-6">
+            <p>2 DESARROLLADORES JUNIOR Y 1 DESARROLLADOR SENIOR</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                <i class="fa fa-line-chart fa-stack-1x fa-inverse"></i>
+            </span>
+            <p><b>Análisis</b></p>
+        </div>
+        <div class="col-md-6">
+            <p>Estás de #5 en conocimiento en tu Industria</p>
+        </div>
+    </div>
+</header>
+
+@section scripts{
+
+    <script>
+    </script>
+}
