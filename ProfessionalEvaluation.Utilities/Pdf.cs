@@ -17,8 +17,9 @@ namespace ProfessionalEvaluation.Utilities
     {
         private static string fontName = "Baskerville";
         private static XFont regularFont = new XFont(fontName, 14, XFontStyle.Regular);
-        private static XFont subtitleFont = new XFont(fontName, 14, XFontStyle.BoldItalic);
+        private static XFont subtitleFont = new XFont(fontName, 14, XFontStyle.Bold);
         private static XFont smallFont = new XFont(fontName, 12, XFontStyle.Regular);
+        private static XFont tinyFont = new XFont(fontName, 10, XFontStyle.Regular);
 
         public static string GenerateSimplePdf(AssesmentReportTO report)
         {
@@ -63,9 +64,12 @@ namespace ProfessionalEvaluation.Utilities
             {
                 // Sections Results
                 heightSpace = heightSpace + 50;
-                gfx.DrawString("Ranking de candidatos", subtitleFont, XBrushes.Black,
+                gfx.DrawString("RAKING DE CANDIDATOS", subtitleFont, XBrushes.Black,
                   new XRect(leftMargin, heightSpace, subtitleWidth, 20),
                   XStringFormats.TopLeft);
+
+                heightSpace = heightSpace + 5;
+                AddTitleLine(gfx, page, heightSpace);
 
                 int index = 1;
                 int candidatePadding = 20;
@@ -106,6 +110,11 @@ namespace ProfessionalEvaluation.Utilities
             }            
         }
 
+        private static void AddTitleLine(XGraphics gfx, PdfPage page, int height)
+        {
+            gfx.DrawRectangle(XBrushes.Black, new XRect(20, height + 15, page.Width - 20 * 2, 1));
+        }
+
         private static void AddMainPage(PdfDocument document, AssesmentReportTO report)
         {
             // Create an empty page
@@ -124,6 +133,8 @@ namespace ProfessionalEvaluation.Utilities
             int leftMargin = 20;
             int subtitleWidth = 150;
             int sectionTextWidth = 180;
+            int roleTitleWidth = 90;
+            int colorWidth = 20;
 
             // Person Name
             heightSpace = heightSpace + 50;
@@ -134,46 +145,38 @@ namespace ProfessionalEvaluation.Utilities
               new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
               XStringFormats.TopLeft);
 
-            // Person Name
-            heightSpace = heightSpace + 30;
-            gfx.DrawString("Fecha finalización:", subtitleFont, XBrushes.Black,
-              new XRect(leftMargin, heightSpace, subtitleWidth, 20),
-              XStringFormats.TopLeft);
-            gfx.DrawString(report.AssesmentInfo.DateFinished.Value.ToString("MMMM dd yyyy"), regularFont, XBrushes.Black,
-              new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
-              XStringFormats.TopLeft);
+            if (report.Analysis != null && report.Analysis.RoleResult != null)
+            {
+                // Title Obtained
+                heightSpace = heightSpace + 30;
+                gfx.DrawString("Resultado:", subtitleFont, XBrushes.Black,
+                  new XRect(leftMargin, heightSpace, roleTitleWidth, 20),
+                  XStringFormats.TopLeft);
+                gfx.DrawString(report.Analysis.RoleResult.Title, regularFont, XBrushes.Black,
+                  new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
+                  XStringFormats.TopLeft);
+
+                // Points Obtained
+                heightSpace = heightSpace + 30;
+                gfx.DrawString("Puntos:", subtitleFont, XBrushes.Black,
+                  new XRect(leftMargin, heightSpace, roleTitleWidth, 20),
+                  XStringFormats.TopLeft);
+                gfx.DrawString(report.Analysis.RoleResult.Points.ToString() + " / " + report.Analysis.RoleResult.PossiblePoints.ToString(), regularFont, XBrushes.Black,
+                  new XRect(leftMargin + subtitleWidth, heightSpace, 300, 20),
+                  XStringFormats.TopLeft);
+            }
 
             // Sections Results
-            heightSpace = heightSpace + 50;
-            gfx.DrawString("Detalle de la evaluación", subtitleFont, XBrushes.Black,
+            heightSpace = heightSpace + 70;
+            gfx.DrawString("DETALLE DE LA EVALUACIÓN", subtitleFont, XBrushes.Black,
               new XRect(leftMargin, heightSpace, subtitleWidth, 20),
               XStringFormats.TopLeft);
 
-            int roleTitleWidth = 90;
-            int colorWidth = 20;
+            heightSpace = heightSpace + 5;
+            AddTitleLine(gfx, page, heightSpace);
+
             if (report.Analysis != null)
             {
-                if (report.Analysis.RoleResult != null)
-                {
-                    // Title Obtained
-                    heightSpace = heightSpace + 30;
-                    gfx.DrawString("Resultado:", subtitleFont, XBrushes.Black,
-                      new XRect(leftMargin, heightSpace, roleTitleWidth, 20),
-                      XStringFormats.TopLeft);
-                    gfx.DrawString(report.Analysis.RoleResult.Title, regularFont, XBrushes.Black,
-                      new XRect(leftMargin + roleTitleWidth + colorWidth + 10, heightSpace, 300, 20),
-                      XStringFormats.TopLeft);
-
-                    // Points Obtained
-                    heightSpace = heightSpace + 30;
-                    gfx.DrawString("Puntos:", subtitleFont, XBrushes.Black,
-                      new XRect(leftMargin, heightSpace, roleTitleWidth, 20),
-                      XStringFormats.TopLeft);
-                    gfx.DrawString(report.Analysis.RoleResult.Points.ToString() + " / " + report.Analysis.RoleResult.PossiblePoints.ToString(), regularFont, XBrushes.Black,
-                      new XRect(leftMargin + roleTitleWidth + colorWidth + 10, heightSpace, 300, 20),
-                      XStringFormats.TopLeft);
-                }
-
                 List<XSolidBrush> brushes = new List<XSolidBrush>();
                 brushes.Add(XBrushes.Yellow);
                 brushes.Add(XBrushes.YellowGreen);
@@ -214,10 +217,13 @@ namespace ProfessionalEvaluation.Utilities
             }
 
             // Sections Results
-            heightSpace = heightSpace + 20;
-            gfx.DrawString("Detalle de las capacidades", subtitleFont, XBrushes.Black,
+            heightSpace = heightSpace + 40;
+            gfx.DrawString("DETALLE DE LAS CAPACIDADES", subtitleFont, XBrushes.Black,
               new XRect(leftMargin, heightSpace, subtitleWidth, 20),
               XStringFormats.TopLeft);
+
+            heightSpace = heightSpace + 5;
+            AddTitleLine(gfx, page, heightSpace);
 
             heightSpace = heightSpace + 30;
             int barSize = 250;
@@ -284,8 +290,15 @@ namespace ProfessionalEvaluation.Utilities
             gfx.DrawRectangle(brush, 0, 50, page.Width, 1);
             gfx.DrawImage(clientImage, 2, 2, 180, 45);
 
+            gfx.DrawString("Fecha finalización:", tinyFont, XBrushes.Black,
+              new XRect(page.Width - 190, 30, 100, 20),
+              XStringFormats.TopLeft);
+            gfx.DrawString(report.AssesmentInfo.DateFinished.Value.ToString("MMMM dd yyyy"), tinyFont, XBrushes.Black,
+              new XRect(page.Width - 100, 30, 75, 20),
+              XStringFormats.TopLeft);
+
             // Evaluation Name
-            XFont titleFont = new XFont(fontName, 15, XFontStyle.BoldItalic);
+            XFont titleFont = new XFont(fontName, 15, XFontStyle.Bold);
             gfx.DrawString(report.AssesmentInfo.Evaluation.Name.ToUpper(), titleFont, XBrushes.Black,
               new XRect(0, 70, page.Width, 20),
               XStringFormats.Center);
