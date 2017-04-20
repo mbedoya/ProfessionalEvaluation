@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssesmentTest.cs" />
+    <Compile Include="CompanyTest.cs" />
     <Compile Include="EvaluationTest.cs" />
     <Compile Include="IndustryTest.cs" />
     <Compile Include="MailTest.cs" />

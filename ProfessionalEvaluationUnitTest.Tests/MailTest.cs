@@ -12,12 +12,13 @@ namespace ProfessionalEvaluationUnitTest.Tests
     [TestClass]
     public class MailTest
     {
+        /*
         [TestMethod]
         public void Send_MailSent_NoExceptionThrown()
         {            
             Mail mail = new Mail(GetMailMessage());
             mail.Send();
-        }
+        }*/
 
         private MailMessageTO GetMailMessage()
         {

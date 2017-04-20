@@ -14,6 +14,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
     [TestClass]
     public class PdfTest
     {
+        /*
         [TestMethod]
         public void GenerateSimplePdf_PdfIsCreated_NoExceptionsThrown()
         {
@@ -25,6 +26,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
             Pdf.GenerateSimplePdf(report);
             Assert.IsTrue(true);
         }
+         */
 
         private List<SectionReportTO> GetReportSections()
         {

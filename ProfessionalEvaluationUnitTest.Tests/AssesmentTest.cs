@@ -122,6 +122,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
             Assert.AreEqual(AssesmentAnswerQuestionResult.InvalidResponse, result);
         }
 
+        /*
         [TestMethod]
         public void AnswerQuestion_MoreQuestionsInSection_QuestionIndexIncreased()
         {
@@ -138,8 +139,9 @@ namespace ProfessionalEvaluationUnitTest.Tests
             {
                 Assert.AreEqual(true, true);
             }
-        }
+        }*/
 
+        /*
         [TestMethod]
         public void AnswerQuestion_NoMoreQuestionsInSection_SectionIndexIncreased()
         {
@@ -157,7 +159,9 @@ namespace ProfessionalEvaluationUnitTest.Tests
                 Assert.AreEqual(true, true);
             }
         }
+         */
 
+        /*
         [TestMethod]
         public void AnswerQuestion_LastQuestion_IndexesNotUpdated()
         {
@@ -176,6 +180,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
                 Assert.AreEqual(true, true);
             }
         }
+         * */
 
         /*
         [TestMethod]
@@ -248,6 +253,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
             Assert.AreEqual(1, context.SectionIndex);
         }
 
+        /*
         [TestMethod]
         public void End_AssesmentStartedAndFinishesSuccessfully_SuccessfulResult()
         {
@@ -262,7 +268,7 @@ namespace ProfessionalEvaluationUnitTest.Tests
                 Assert.IsTrue(true);
             }
             
-        }
+        }*/
 
         [TestMethod]
         public void End_AssesmentNotStartedStatusRemains_StatusDoesNotChange()

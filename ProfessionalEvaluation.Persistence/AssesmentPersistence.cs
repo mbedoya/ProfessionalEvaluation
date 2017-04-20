@@ -11,7 +11,7 @@ namespace ProfessionalEvaluation.Persistence
     public class AssesmentPersistence : Persistence
     {
         private static string command = 
-                "SELECT a.ID, a.AssesmentID, a.DateStarted, a.DateFinished, a.PersonName, at.Name as AssesmentType ,c.Name, c.LogoPath, e.ID as EvalID, e.Name as EvalName, e.Description as EvalDescription " +
+                "SELECT a.ID, a.AssesmentID, a.DateStarted, a.DateFinished, a.PersonName, at.Name as AssesmentType , c.ID as CompanyID, c.Name, c.LogoPath, e.ID as EvalID, e.Name as EvalName, e.Description as EvalDescription " +
                 " FROM assesment a " +
                 " JOIN assesment_type at ON a.AssesmentTypeID = at.ID " +
                 " JOIN company c ON a.CompanyID = c.ID" +
@@ -164,6 +164,7 @@ namespace ProfessionalEvaluation.Persistence
             }
 
             element.Company = new CompanyTO();
+            element.Company.ID = Convert.ToInt32(table.Rows[0]["CompanyID"]);
             element.Company.Name = Convert.ToString(table.Rows[0]["Name"]);
             element.Company.Logo = Convert.ToString(table.Rows[0]["LogoPath"]);
 

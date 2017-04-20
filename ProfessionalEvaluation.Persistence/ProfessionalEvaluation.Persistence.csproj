@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AnalysisPersistence.cs" />
     <Compile Include="AssesmentPersistence.cs" />
+    <Compile Include="CompanyPersistence.cs" />
     <Compile Include="DataAdapterFactory.cs" />
     <Compile Include="EvaluationPersistence.cs" />
     <Compile Include="Persistence.cs" />
